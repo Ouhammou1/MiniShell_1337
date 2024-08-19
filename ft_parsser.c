@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 18:00:47 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/08/19 13:58:18 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/08/19 20:40:22 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,11 @@ void	ft_count_parameters(t_splitor *tmp_x, int *count)
 	t_splitor	*tmp;
 
 	tmp = tmp_x;
-	if (tmp != NULL && tmp->type == '|')
+	if (tmp != NULL && tmp->type == '|' && tmp->state == G)
 		(*count)++;
-	else if (tmp != NULL && tmp->type != '|')
+	else if (tmp != NULL)
 	{
-		while (tmp != NULL && tmp->type != '|')
+		while (tmp != NULL && !(tmp->type == '|' && tmp->state == G))
 		{
 			ft_skip_spaces(&tmp);
 			if (tmp != NULL && tmp->state == G && tmp->type != '\"'
@@ -50,8 +50,7 @@ void	ft_count_parameters(t_splitor *tmp_x, int *count)
 				(*count)++;
 				tmp = tmp->next;
 			}
-			else if (tmp != NULL && (tmp->state == D || tmp->state == S)
-				&& tmp->type != '|')
+			else if (tmp != NULL && (tmp->state == D || tmp->state == S))
 				ft_count_d_s(&tmp, count);
 			else if (tmp != NULL && tmp->type != '|')
 				tmp = tmp->next;
@@ -81,22 +80,24 @@ void	ft_command(t_splitor **x, t_command **cmd)
 	l = 0;
 	while (tmp_cmd != NULL)
 	{
-		printf("\nCommand  <----------------------------------> \n");
-		printf("Content : %s \n", tmp_cmd->content);
+		printf("\033[0;32m\n\t++++++++++++++   Command   ++++++++++++++++\n\033[0m");
+		printf("Content :	 %s \n", tmp_cmd->content);
 		if (tmp_cmd->arg[i] != NULL)
-			printf("Argument : ");
+			printf("Argument :	");			
 		while (tmp_cmd->arg[i] != NULL)
 		{
 			printf(" [%s] ", tmp_cmd->arg[i]);
 			i++;
 		}
+		i=0;
 		printf("\n");
-		printf("doc:\n");
+		printf("doc :		\n");
 		print_redirect_list(tmp_cmd->doc);
 		printf("\n");
 		while (tmp_cmd->store_her[l] != NULL)
 		{
-			printf("store: %s\n", tmp_cmd->store_her[l]);
+			printf("len  = %d     store: 		%s\n",tmp_cmd->len , tmp_cmd->store_her[l]);
+
 			l++;
 		}
 		l = 0;

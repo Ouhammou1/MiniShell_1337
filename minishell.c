@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/17 13:08:06 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/08/19 13:56:50 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/08/19 20:39:06 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,6 @@ void	print_envarment(t_envarment *env)
 		current = current->next;
 	}
 }
-
 
 
 int	main(int ac, char **av, char **env)

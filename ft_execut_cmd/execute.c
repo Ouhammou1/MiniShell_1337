@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/28 20:46:31 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/08/19 15:21:37 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/08/19 20:39:25 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,7 @@ bool		hundle_redirections(t_command *list)
 		}
 		// else if ( tmp->doc->type == HERE_DOC)
 		// {
-		// 	printf("\n************************** Redirections HERDOG  | %s \n", tmp->doc->store);
-
+		// 	handle_here_doc(tmp->store);
 		// }
 		tmp = tmp->next;
 	}
@@ -80,6 +79,10 @@ bool		hundle_redirections(t_command *list)
 
 void  ft_exute( t_envarment *var , t_command *list , char **env)
 {
+		printf("***************************************************************\n");
+		printf("**************    \033[0;31m   Result of the Command   \033[0m******************\n");
+		printf("***************************************************************\n\n");
+		
 	if (list == NULL)
 		return ;
 	
@@ -105,13 +108,10 @@ void  ft_exute( t_envarment *var , t_command *list , char **env)
 		ft_echo(list,env);	
 	else
 	{
-		printf("***************************************************************\n");
-		printf("**************    \033[0;31m   Result of the Command   \033[0m******************\n");
-		printf("***************************************************************\n\n");
+
 
 		if( pipe_exist(list) == 1)
 		{
-			// hundle_redirections(list);
 			handle_pipe(list,env);
 		}
 		else
