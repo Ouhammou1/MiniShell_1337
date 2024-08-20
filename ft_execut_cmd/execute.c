@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/28 20:46:31 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/08/19 20:39:25 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/08/20 18:09:29 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,36 +45,36 @@ void  execution_cmd(t_command 	*list ,char **new, char **env)
 }
 
 
-bool		hundle_redirections(t_command *list)
+int		hundle_redirections(t_command *list)
 {
 	t_redirect *tmp;
-	bool		redir = false;
+	int		redir = 0;
 	
 	tmp = list->doc;
+	printf("list->content ==========//////=============  %s\n", list->content);
+	
 	while (tmp != NULL)
 	{
 		if (tmp->type == REDIR_OUT)
 		{
 			hundle_redir_out(tmp->store);
-			redir = true;
+			redir = 1;
 		}
-		else if (tmp->type == REDIR_IN)
+		if (tmp->type == REDIR_IN)
 		{
 			hundle_redir_in(tmp->store);
-			redir = true;
+			redir = 1;
 		}
-		else if ( tmp->type == DREDIR_OUT)
+		if( tmp->type == DREDIR_OUT)
 		{
 			hundle_dredir_out(tmp->store);
-			redir = true;
+			redir = 1;
 		}
-		// else if ( tmp->doc->type == HERE_DOC)
-		// {
-		// 	handle_here_doc(tmp->store);
-		// }
+
 		tmp = tmp->next;
 	}
-	return (redir);
+	list= list->next;
+return (redir);
 }
 
 void  ft_exute( t_envarment *var , t_command *list , char **env)
@@ -108,15 +108,19 @@ void  ft_exute( t_envarment *var , t_command *list , char **env)
 		ft_echo(list,env);	
 	else
 	{
-
-
+		if(herdoc_exist(list) == 1)
+		{
+			handle_here_doc(list,env);
+		}
 		if( pipe_exist(list) == 1)
 		{
-			handle_pipe(list,env);
+			handle_pipe(list, env);
 		}
 		else
 		{
+
 			char **new = ft_new_args(list->arg, list->doc);
+			printf("new[0] = %s\n", new[0]);
 			execution_cmd(list, new ,env);
 		}
 	}

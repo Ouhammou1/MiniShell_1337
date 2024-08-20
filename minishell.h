@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/25 14:49:25 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/08/19 20:38:18 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/08/20 18:20:09 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@
 # include <sys/wait.h>
 # include <termios.h>
 # include <unistd.h>
+#include <stdbool.h>  
 
 // function we use
 
@@ -96,14 +97,22 @@ char            **split_var(char *ptr);// ft_env
 void            print_export(t_envarment *var, t_command *str);
 void            execution_cmd(t_command         *list ,char **new, char **env);
 void            hundle_command(t_command *list ,char **env);
-bool			hundle_redirections(t_command *list);
+int				hundle_redirections(t_command *list);
 void			handle_pipe( t_command *list, char **env);
+// void			handle_here_doc(t_command *tmp);
 
 ///////////////////////// Redirections  //////////////////////////
-void			hundle_redir_out(char 	*file);
-void			hundle_redir_in(char 	*file);
-void			hundle_dredir_out(char *file);
+void			hundle_redir_out(char 		*file);
+void			hundle_redir_in(char 		*file);
+void			hundle_dredir_out(char	 	*file);
 
+
+
+/////////////////////////  her doc  //////////////////////////
+int 			herdoc_exist(t_command *list);
+void			handle_here_doc(t_command *tmp , char **env);
+t_here_doc  	*new_node_her(int idx , char *file, int fd, bool expand);
+void    		add_back_node_her(t_here_doc **her, t_here_doc *new_her);
 
 
 /////////////////////////  function redirections  //////////////////////////
@@ -120,7 +129,7 @@ char 			*command_execut(t_command *list);
 int 			**return_pipe(int num_cmd);
 t_command 		*get_list_command(t_command *list);
 void    		close_free_wait( int *pids, int **pipefd, int num_cmd , t_command *tmp_cmd);
-void       	    child_process(int ** pipefd,int  i,t_command *tmp_cmd,char **env , int num_cmd);
+void       	    child_process(int ** pipefd,int  i,t_command *tmp_cmd,char **env , int num_cmd );//, int *red);
 void 			handle_pipe(t_command *list, char **env);
 
 

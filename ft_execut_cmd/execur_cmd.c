@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 17:31:58 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/08/19 13:41:59 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/08/20 13:27:40 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,11 @@ t_command *get_list_command(t_command *list)
             tmp->content = list->content;
             tmp->arg = list->arg;
             tmp->doc = list->doc;
+            // tmp->doc->store = list->doc->store;
+            // tmp->doc->type = list->doc->type;
+            // tmp->doc->next = list->doc->next;
+            // tmp->store_her = list->store_her;
+            // tmp->len = list->len;
             tmp->next = NULL;
             if (prev)
                 prev->next = tmp;
@@ -142,12 +147,23 @@ void    close_free_wait( int *pids, int **pipefd, int num_cmd , t_command *tmp_c
     free(pipefd);
     free(tmp_cmd);
 }
-void           child_process(int ** pipefd,int  i,t_command *tmp_cmd,char **env , int num_cmd)
+void           child_process(int ** pipefd,int  i,t_command *tmp_cmd,char **env , int num_cmd )//, int *red)
 {
         char **new_args ;
         char *ptr;
-        
-        hundle_redirections(tmp_cmd);
+        // (void)red;
+        // printf("///////////////////*///////////////*///////////////*/////////////*\n\n");
+        // if( *red  == 1)
+        // {
+        //     int j   = 0;
+        //     while (j < num_cmd - 1)
+        //     {
+        //         close(pipefd[j][0]);
+        //         close(pipefd[j][1]);
+        //         j++;
+        //     }
+        //     exit(EXIT_FAILURE);
+        // }
         if (i > 0) 
         {
             close(pipefd[i - 1][1]);
@@ -163,10 +179,13 @@ void           child_process(int ** pipefd,int  i,t_command *tmp_cmd,char **env 
         }
         new_args = ft_new_args(tmp_cmd->arg , tmp_cmd->doc);
         ptr = command_execut(tmp_cmd);
-        if (!ptr) exit(EXIT_FAILURE);
+        if (!ptr)
+            exit(EXIT_FAILURE);
         execve(ptr, new_args, env);
         perror("execve failed");
         exit(EXIT_FAILURE);
+        
+
 }
 
 
@@ -175,14 +194,16 @@ void handle_pipe(t_command *list, char **env)
 {
     int num_cmd = num_pipe(list) + 1;
     int **pipefd = return_pipe(num_cmd);
-    pid_t *pids = (pid_t *)malloc(sizeof(pid_t) * num_cmd);
+    // int red = 0;
     
-    if (!pids) {
+    t_command *tmp_cmd = get_list_command(list);
+    
+    pid_t *pids = (pid_t *)malloc(sizeof(pid_t) * num_cmd);
+    if (!pids)
+    {
         perror("malloc");
         exit(EXIT_FAILURE);
     }
-    t_command *tmp_cmd = get_list_command(list);
-    
     int i = 0;
     while (i < num_cmd && tmp_cmd)
     {
@@ -191,18 +212,20 @@ void handle_pipe(t_command *list, char **env)
             perror("pipe");
             exit(EXIT_FAILURE);
         }
-
         pids[i] = fork();
         if (pids[i] == -1)
         {
             perror("fork");
             exit(EXIT_FAILURE);
         }
+        // red = hundle_redirections(list);
         if (pids[i] == 0)
         {        
-             child_process(pipefd, i, tmp_cmd, env , num_cmd);
+            printf(" id child = %d\n", i);
+            child_process(pipefd, i, tmp_cmd, env , num_cmd );//, &red);
         }
-        if (i > 0) {
+        if (i > 0)
+        {
             close(pipefd[i - 1][0]);
             close(pipefd[i - 1][1]);
         }

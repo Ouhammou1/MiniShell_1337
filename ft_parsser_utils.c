@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_parsser_utils.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rel-mora <reduno96@gmail.com>              +#+  +:+       +#+        */
+/*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 21:25:06 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/08/19 18:27:12 by rel-mora         ###   ########.fr       */
+/*   Updated: 2024/08/20 17:07:47 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void	ft_her_doc(t_command **new_node)
 			(*new_node)->len++;
 		tmp = tmp->next;
 	}
-	(*new_node)->store_her = malloc(sizeof(char *) * (*new_node)->len);
+	(*new_node)->store_her = malloc(sizeof(char *) * (*new_node)->len + 1);
 	tmp = (*new_node)->doc;
 	while (tmp != NULL)
 	{
