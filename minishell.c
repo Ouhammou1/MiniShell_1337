@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/17 13:08:06 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/08/19 20:39:06 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/08/22 15:39:23 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,49 +38,73 @@ void	print_envarment(t_envarment *env)
 		current = current->next;
 	}
 }
-
-
-int	main(int ac, char **av, char **env)
+void	handle_sig(int sig)
 {
-	char		*str_input;
-	t_splitor	*x;
-	t_envarment	*my_env;
-	t_command	*cmd;
+	if (sig == SIGINT)
+	{
+		printf("\n");
+		rl_replace_line("", 0);
+		rl_on_new_line();
+		rl_redisplay();
+	}
+}
 
-	(void)ac;
-	(void)av;
-	my_env = NULL;
-	my_env = ft_stock_envarment(env);
-	using_history();
-	
-	x = NULL;
+void	ft_initialize(t_splitor *x, t_command *cmd, t_envarment *my_env,
+		char **env)
+{
+	ft_check_env(&x, my_env);
+	ft_command(&x, &cmd);
+	ft_exute(my_env, cmd, env);
+	ft_free_lexer(&x);
+}
+void	ft_reader(t_splitor *x, t_command *cmd, t_envarment *my_env, char **env)
+{
+	char	*str_input;
+
 	while (1)
 	{
-		cmd = NULL;
 		str_input = readline("\033[36m➨ minishell $:\033[0m  ");
 		if (!str_input)
-			exit(1);
+		{
+			printf("exit\n");
+			//
+			exit(0);
+		}
 		if (ft_strlen(str_input) > 0)
 			add_history(str_input);
-			
 		if (ft_lexer(str_input, &x))
 		{
 			ft_putstr_fd("Syntax Error:\n", 2);
 			ft_free_lexer(&x);
 		}
 		else
-		{		
-			ft_check_env(&x, my_env);
-			ft_command(&x, &cmd);
-			ft_exute(my_env, cmd, env);
-			ft_free_lexer(&x);
-		}
-	
+			ft_initialize(x, cmd, my_env, env);
 		ft_free_command(cmd);
+		cmd = NULL;
 		x = NULL;
-		if (ft_search(str_input, "exit"))
-			exit(0);
 		free(str_input);
 	}
+}
+void ft_d(int signal)
+{
+	printf("fdf\n");
+	if (signal == SIGQUIT)
+		printf("quit\n");
+}
+int	main(int ac, char **av, char **env)
+{
+	t_splitor	*x;
+	t_envarment	*my_env;
+	t_command	*cmd;
+
+	signal(SIGINT, handle_sig);
+	(void)ac;
+	(void)av;
+	my_env = NULL;
+	my_env = ft_stock_envarment(env);
+	using_history();
+	x = NULL;
+	cmd = NULL;
+	ft_reader(x, cmd, my_env, env);
 	ft_free_env(&my_env);
 }

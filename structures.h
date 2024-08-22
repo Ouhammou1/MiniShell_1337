@@ -6,13 +6,13 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 07:58:38 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/08/20 17:38:16 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/08/22 15:36:35 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef STRUCTURES_H
 # define STRUCTURES_H
-#include <stdbool.h>  
+# include <stdbool.h>
 typedef struct s_idx
 {
 	int					i;
@@ -76,19 +76,19 @@ typedef struct s_command
 	char				**arg;
 	t_redirect			*doc;
 	char				**store_her;
+	int					is_pipe;
 	int					len;
 	struct s_command	*next;
 }						t_command;
 
 typedef struct s_here_doc
 {
-	
+	int					indx_cmd;
 	int					indx;
 	char				*store;
-	int 				fd;
+	int					fd;
 	bool				is_expanded;
 	struct s_here_doc	*next;
 }						t_here_doc;
-
 
 #endif

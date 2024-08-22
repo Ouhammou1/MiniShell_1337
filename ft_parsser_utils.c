@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_parsser_utils.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rel-mora <reduno96@gmail.com>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 21:25:06 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/08/20 17:07:47 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/08/20 19:23:33 by rel-mora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,11 +74,13 @@ t_command	*ft_new_command(int count, t_splitor **tmp_x)
 	new_node = malloc(sizeof(t_command));
 	new_node->arg = malloc(sizeof(char *) * (count + 1));
 	new_node->len = 0;
+	new_node->is_pipe = 0;
 	if (((*tmp_x) != NULL && ((*tmp_x)->type == '|' && (*tmp_x)->state == G)))
 	{
 		new_node->arg[i] = ft_strdup((*tmp_x)->in);
 		i++;
 		new_node->arg[i] = NULL;
+		new_node->is_pipe = 1;
 		new_node->next = NULL;
 		(*tmp_x) = (*tmp_x)->next;
 	}

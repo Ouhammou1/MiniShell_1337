@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/25 14:49:25 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/08/20 18:20:09 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/08/22 15:37:39 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@
 # include <sys/wait.h>
 # include <termios.h>
 # include <unistd.h>
-#include <stdbool.h>  
+#include <stdbool.h>
 
 // function we use
 
@@ -91,7 +91,7 @@ char            *path_command(char *ptr);
 t_envarment 	*ft_stock_envarment(char **env);
 int             test_exist(t_envarment *var , char **list);
 
-void            free_args(char **args);// ft_export 
+void            free_args(char **args);// ft_export
 char            **split_line(char *ptr);// ft_export
 char            **split_var(char *ptr);// ft_env
 void            print_export(t_envarment *var, t_command *str);
@@ -111,7 +111,7 @@ void			hundle_dredir_out(char	 	*file);
 /////////////////////////  her doc  //////////////////////////
 int 			herdoc_exist(t_command *list);
 void			handle_here_doc(t_command *tmp , char **env);
-t_here_doc  	*new_node_her(int idx , char *file, int fd, bool expand);
+t_here_doc  	*new_node_her(int idx , int i,char *file, int fd, bool expand);
 void    		add_back_node_her(t_here_doc **her, t_here_doc *new_her);
 
 
@@ -141,14 +141,14 @@ void 			handle_pipe(t_command *list, char **env);
 
 // ///////            Commands         //////////////////////////////////
 // int			builtin_cmd(t_envarment *var ,t_command *list ,char  **env);
-void            ft_cd(t_command *list);
-void            ft_pwd(t_command *va_list);
-void            ft_export( t_envarment *var , t_command *str);
-void            ft_env( t_envarment *var);
-void            ft_unset(t_envarment *var , t_command *list);
-void            ft_echo(t_command *list, char **env);
+int            ft_cd(t_command *list);
+int            ft_pwd(t_command *va_list);
+int            ft_export( t_envarment *var , t_command *str);
+int            ft_env( t_envarment *var);
+int            ft_unset(t_envarment *var , t_command *list);
+int            ft_echo(t_command *list, char **env);
 void            ft_echo_flag(t_command *list);
-void			ft_exit(t_envarment *var ,t_command *list);
+int			ft_exit(t_envarment *var ,t_command *list);
 
 
 
