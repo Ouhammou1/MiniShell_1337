@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 17:31:58 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/08/22 15:33:15 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/08/23 11:52:10 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,19 +153,6 @@ void	child_process(int **pipefd, int i, t_command *tmp_cmd, char **env,
 	char	**new_args;
 	char	*ptr;
 
-	// (void)red;
-	// printf("///////////////////*///////////////*///////////////*/////////////*\n\n");
-	// if( *red  == 1)
-	// {
-	//     int j   = 0;
-	//     while (j < num_cmd - 1)
-	//     {
-	//         close(pipefd[j][0]);
-	//         close(pipefd[j][1]);
-	//         j++;
-	//     }
-	//     exit(EXIT_FAILURE);
-	// }
 	if (i > 0)
 	{
 		close(pipefd[i - 1][1]);
@@ -178,12 +165,15 @@ void	child_process(int **pipefd, int i, t_command *tmp_cmd, char **env,
 		dup2(pipefd[i][1], STDOUT_FILENO);
 		close(pipefd[i][1]);
 	}
-	if (hundle_redirections(tmp_cmd))
-	{
-		tmp_cmd = tmp_cmd->next;
-	}
+	// if (hundle_redirections(tmp_cmd) == 1)
+	// {
+	// 	perror("\n ------->>>>  redirections\n");
+	// 	// tmp_cmd = tmp_cmd->next;
+	// 	// exit(EXIT_FAILURE);
+	// }
 	
 	new_args = ft_new_args(tmp_cmd->arg, tmp_cmd->doc);
+	printf("new_args = %s\n", new_args[0]);
 	ptr = command_execut(tmp_cmd);
 	if (!ptr)
 		exit(EXIT_FAILURE);
@@ -192,7 +182,8 @@ void	child_process(int **pipefd, int i, t_command *tmp_cmd, char **env,
 	exit(EXIT_FAILURE);
 }
 
-void	handle_pipe(t_command *list, char **env)
+
+void		handle_pipe(t_command *list, char **env)
 {
 	int			num_cmd;
 	int			**pipefd;
@@ -218,6 +209,7 @@ void	handle_pipe(t_command *list, char **env)
 			perror("pipe");
 			exit(EXIT_FAILURE);
 		}
+
 		pids[i] = fork();
 		if (pids[i] == -1)
 		{
@@ -227,6 +219,10 @@ void	handle_pipe(t_command *list, char **env)
 
 		if (pids[i] == 0)
 		{
+			if (herdoc_exist(tmp_cmd))
+			{
+				handle_here_doc(tmp_cmd, env);
+			}
 			// printf(" id child = %d\n", i);
 			child_process(pipefd, i, tmp_cmd, env, num_cmd); //, &red);
 		}
@@ -240,3 +236,89 @@ void	handle_pipe(t_command *list, char **env)
 	}
 	close_free_wait(pids, pipefd, num_cmd, tmp_cmd);
 }
+
+
+
+// void	handle_pipe(t_command *list, char **env)
+// {
+// 	int			num_cmd;
+// 	int			**pipefd;
+// 	t_command	*tmp_cmd;
+// 	pid_t		*pids;
+// 	int			i;
+
+// 	num_cmd = num_pipe(list) + 1;
+// 	pipefd = return_pipe(num_cmd);
+
+// 	// Get the list of commands (excluding the pipes themselves)
+// 	tmp_cmd = get_list_command(list);
+// 	pids = (pid_t *)malloc(sizeof(pid_t) * num_cmd);
+// 	if (!pids)
+// 	{
+// 		perror("malloc");
+// 		exit(EXIT_FAILURE);
+// 	}
+
+// 	i = 0;
+// 	while (i < num_cmd && tmp_cmd)
+// 	{
+// 		if (pipe(pipefd[i]) == -1)
+// 		{
+// 			perror("pipe");
+// 			exit(EXIT_FAILURE);
+// 		}
+// 		pids[i] = fork();
+// 		if (pids[i] == -1)
+// 		{
+// 			perror("fork");
+// 			exit(EXIT_FAILURE);
+// 		}
+
+// 		if (pids[i] == 0)
+// 		{
+// 			// Child process handles redirections and execution
+
+// 			// Handle input from previous pipe (if not the first command)
+// 			if (i > 0)
+// 			{
+// 				close(pipefd[i - 1][1]);
+// 				dup2(pipefd[i - 1][0], STDIN_FILENO);
+// 				close(pipefd[i - 1][0]);
+// 			}
+
+// 			// Handle output to next pipe (if not the last command)
+// 			if (i < num_cmd - 1)
+// 			{
+// 				close(pipefd[i][0]);
+// 				dup2(pipefd[i][1], STDOUT_FILENO);
+// 				close(pipefd[i][1]);
+// 			}
+// 			if (hundle_redirections(tmp_cmd) == 1)
+// 			{
+// 				// If redirection fails, print an error and exit
+// 				perror("Error with redirections");
+// 				exit(EXIT_FAILURE);
+// 			}
+
+// 			// Execute the command
+// 			char **new_args = ft_new_args(tmp_cmd->arg, tmp_cmd->doc);
+// 			char *ptr = command_execut(tmp_cmd);
+// 			if (!ptr)
+// 				exit(EXIT_FAILURE);
+// 			execve(ptr, new_args, env);
+// 			perror("execve failed");
+// 			exit(EXIT_FAILURE);
+// 		}
+
+// 		// Close pipes in the parent process
+// 		if (i > 0)
+// 		{
+// 			close(pipefd[i - 1][0]);
+// 			close(pipefd[i - 1][1]);
+// 		}
+// 		tmp_cmd = tmp_cmd->next;
+// 		i++;
+// 	}
+
+// 	close_free_wait(pids, pipefd, num_cmd, tmp_cmd);
+// }

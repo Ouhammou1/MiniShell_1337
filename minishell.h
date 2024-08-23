@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/25 14:49:25 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/08/22 15:37:39 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/08/23 17:21:33 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ char            **split_var(char *ptr);// ft_env
 void            print_export(t_envarment *var, t_command *str);
 void            execution_cmd(t_command         *list ,char **new, char **env);
 void            hundle_command(t_command *list ,char **env);
-int				hundle_redirections(t_command *list);
+void				hundle_redirections(t_command *list);
 void			handle_pipe( t_command *list, char **env);
 // void			handle_here_doc(t_command *tmp);
 

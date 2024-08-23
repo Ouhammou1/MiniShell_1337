@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:55:15 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/08/22 15:41:20 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/08/23 11:48:28 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,19 +30,25 @@ t_here_doc	*return_herdoc(t_command *list)
 	t_here_doc	*her;
 	int			idx;
 	int			i;
-
+	t_command	*tmp;
+	
+	tmp = list;
 	her = NULL;
 	idx = 0;
-	while (list)
+	while (tmp)
 	{
-		i = 0;
-		while (list->store_her != NULL && list->store_her[i])
+		if(tmp->store_her != NULL )
 		{
-			add_back_node_her(&her, new_node_her(idx, i, list->store_her[i], -1,false));
-			i++;
+			i = 0;
+			while ( tmp->store_her[i])
+			{
+				add_back_node_her(&her, new_node_her( idx, i, tmp->store_her[i], -1,false));
+				i++;			
+			}
 		}
-		idx++;
-		list = list->next;
+		if(tmp->content[0] != '|')
+			idx++;
+		tmp = tmp->next;
 	}
 	return (her);
 }
@@ -146,7 +152,7 @@ void	handle_here_doc(t_command *tmp, char **env)
 	t_here_doc	*her;
 	t_here_doc	*tmp_her;
 	char		*line;
-	t_here_doc	*delet_her;
+	// t_here_doc	*delet_her;
 
 	(void)env;
 	i = 0;
@@ -157,7 +163,7 @@ void	handle_here_doc(t_command *tmp, char **env)
 	while (tmp_her != NULL)
 	{
 		printf("her->file = %s et indx = %d et i = %d   et fd = %d \n",
-			tmp_her->store, tmp_her->indx, tmp_her->indx, tmp_her->fd);
+			tmp_her->store, tmp_her->indx_cmd, tmp_her->indx, tmp_her->fd);
 		tmp_her = tmp_her->next;
 	}
 	printf("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
@@ -184,6 +190,6 @@ void	handle_here_doc(t_command *tmp, char **env)
 		free(line);
 	}
 	hundle_output_herdoc(her);
-	delet_her = return_herdoc(tmp);
-	delet_file_her(delet_her);
+	// delet_her = return_herdoc(tmp);
+	// delet_file_her(delet_her);
 }
