@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:55:15 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/08/23 11:48:28 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/08/24 11:36:13 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,6 +145,7 @@ void	write_in_file(t_here_doc *tmp, char *line)
 	tmp = tmp->next;
 }
 
+
 void	handle_here_doc(t_command *tmp, char **env)
 {
 	int			i;
@@ -193,3 +194,4 @@ void	handle_here_doc(t_command *tmp, char **env)
 	// delet_her = return_herdoc(tmp);
 	// delet_file_her(delet_her);
 }
+

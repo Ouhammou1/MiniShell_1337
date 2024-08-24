@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/10 09:06:30 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/08/22 13:04:03 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/08/24 12:51:23 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ int	ft_echo(t_command *list, char **env)
 		if (test_redir_here_doc(list) == 1)
 		{
 			new = ft_new_args(list->arg, list->doc);
+			// execution_cmd(list, new, env);
 			execution_cmd(list, new, env);
 		}
 		return (0);
@@ -69,6 +70,7 @@ int	ft_echo(t_command *list, char **env)
 	{
 		new = ft_new_args(list->arg, list->doc);
 		execution_cmd(list, new, env);
+		// execution_cmd(list , env);
 	}
 	return (1);
 }

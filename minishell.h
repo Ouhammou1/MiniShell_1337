@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/25 14:49:25 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/08/23 17:21:33 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/08/24 13:25:17 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,10 +95,13 @@ void            free_args(char **args);// ft_export
 char            **split_line(char *ptr);// ft_export
 char            **split_var(char *ptr);// ft_env
 void            print_export(t_envarment *var, t_command *str);
-void            execution_cmd(t_command         *list ,char **new, char **env);
+// void            execution_cmd(t_command         *list ,char **new, char **env);
+// void            execution_cmd(t_command         *list ,char **env);
+void			execution_cmd(t_command *list,char **new ,char **env);// char **new, char **env)
+
 void            hundle_command(t_command *list ,char **env);
-void				hundle_redirections(t_command *list);
-void			handle_pipe( t_command *list, char **env);
+void			hundle_redirections(t_command *list);
+int			handle_pipe( t_command *list, char **env);
 // void			handle_here_doc(t_command *tmp);
 
 ///////////////////////// Redirections  //////////////////////////
@@ -130,7 +133,6 @@ int 			**return_pipe(int num_cmd);
 t_command 		*get_list_command(t_command *list);
 void    		close_free_wait( int *pids, int **pipefd, int num_cmd , t_command *tmp_cmd);
 void       	    child_process(int ** pipefd,int  i,t_command *tmp_cmd,char **env , int num_cmd );//, int *red);
-void 			handle_pipe(t_command *list, char **env);
 
 
 /////////////////////////  signal  //////////////////////////
