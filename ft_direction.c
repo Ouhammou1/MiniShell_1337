@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_direction.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rel-mora <reduno96@gmail.com>              +#+  +:+       +#+        */
+/*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 07:24:52 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/08/12 21:48:21 by rel-mora         ###   ########.fr       */
+/*   Updated: 2024/08/25 18:45:33 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	print_redirect_list(t_redirect *head)
 	current = head;
 	while (current != NULL)
 	{
-		printf("Type: %d, Store: %s\n", current->type, current->store);
+		// printf("Type: %d, Store: %s\n", current->type, current->store);
 		current = current->next;
 	}
 }

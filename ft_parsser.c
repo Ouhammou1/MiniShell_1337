@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_parsser.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rel-mora <rel-mora@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 18:00:47 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/08/22 13:14:46 by rel-mora         ###   ########.fr       */
+/*   Updated: 2024/08/27 20:09:24 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,45 +63,45 @@ void	ft_command(t_splitor **x, t_command **cmd)
 	int			count;
 	t_splitor	*tmp_x;
 	t_command	*tmp_cmd;
-	int			i;
-	int			l;
+	// int			i;
+	// int			l;
 
-	i = 0;
+	// i = 0;
 	tmp_x = *x;
 	while (tmp_x != NULL)
 	{
 		count = 0;
 		ft_count_parameters(tmp_x, &count);
-		printf("Count: %d\n", count);
+		// printf("Count: %d\n", count);
 		ft_add_command(cmd, ft_new_command(count, &tmp_x));
 	}
 	tmp_cmd = *cmd;
-	i = 0;
-	while (tmp_cmd != NULL)
-	{
-		printf("\033[0;32m\n\t++++++++++++++   Command   ++++++++++++++++\n\033[0m");
-		printf("Content :	 %s \n", tmp_cmd->content);
-		if (tmp_cmd->arg[i] != NULL)
-			printf("Argument :	");
-		while (tmp_cmd->arg[i] != NULL)
-		{
-			printf(" [%s] ", tmp_cmd->arg[i]);
-			i++;
-		}
-		i=0;
-		printf("\n");
-		printf("doc :		\n");
-		print_redirect_list(tmp_cmd->doc);
-		printf("\n");
-		l = 0;
-		while (tmp_cmd->store_her[l] != NULL)
-		{
-			printf("len  = %d     store:   %s\n",tmp_cmd->len , tmp_cmd->store_her[l]);
-			l++;
-		}
-		l = 0;
-		tmp_cmd = tmp_cmd->next;
-	}
+	// i = 0;
+	// while (tmp_cmd != NULL)
+	// {
+	// 	printf("\033[0;32m\n\t++++++++++++++   Command   ++++++++++++++++\n\033[0m");
+	// 	printf("Content :	 %s \n", tmp_cmd->content);
+	// 	if (tmp_cmd->arg[i] != NULL)
+	// 		printf("Argument :	");
+	// 	while (tmp_cmd->arg[i] != NULL)
+	// 	{
+	// 		printf(" [%s] ", tmp_cmd->arg[i]);
+	// 		i++;
+	// 	}
+	// 	i=0;
+	// 	printf("\n");
+	// 	printf("doc :		\n");
+	// 	print_redirect_list(tmp_cmd->doc);
+	// 	printf("\n");
+	// 	l = 0;
+	// 	while (tmp_cmd->store_her[l] != NULL)
+	// 	{
+	// 		printf("len  = %d     store:   %s\n",tmp_cmd->len , tmp_cmd->store_her[l]);
+	// 		l++;
+	// 	}
+	// 	l = 0;
+	// 	tmp_cmd = tmp_cmd->next;
+	// }
 }
 // while (tmp_cmd != NULL)
 // {

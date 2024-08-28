@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 17:33:07 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/08/24 12:56:13 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/08/25 13:05:22 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ char	*git_type_redir(t_redirect *redir)
 			return ("<");
 		else if (redir->type == DREDIR_OUT)
 			return (">>");
-		else if (redir->type == HERE_DOC)
-			return ("<<");
+		// else if (redir->type == HERE_DOC)
+		// 	return ("<<");
 		return (NULL);
 	}
 }
@@ -89,8 +89,7 @@ int 	test_redir_here_doc(t_command *list)
 	tmp = list->doc;
 	while (tmp != NULL)
 	{
-		
-		if (tmp->type == HERE_DOC || tmp->type == DREDIR_OUT || tmp->type == REDIR_OUT || tmp->type == REDIR_IN)
+		if (tmp->type == DREDIR_OUT || tmp->type == REDIR_OUT || tmp->type == REDIR_IN)
 		{
 			return (1);
 		}
