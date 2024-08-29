@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/25 13:23:44 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/08/25 17:43:47 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/08/29 19:36:47 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,12 @@
 
 void	print_t_command(t_splitor *cmd)
 {
-	if (cmd == NULL)
-	{
-		printf("Command is NULL\n");
-		return ;
-	}
+	(void)cmd;
+	// if (cmd == NULL)
+	// {
+	// 	printf("Command is NULL\n");
+	// 	return ;
+	// }
 	// while (cmd != NULL)
 	// {
 	// 	///////////////////////////////  here /////////////////////////////////////////

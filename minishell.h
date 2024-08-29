@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/25 14:49:25 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/08/27 18:37:59 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/08/29 15:38:26 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ int             test_exist(t_envarment *var , char **list);
 void            free_args(char **args);// ft_export
 char            **split_line(char *ptr);// ft_export
 char            **split_var(char *ptr);// ft_env
-void            print_export(t_envarment *var);
+void            print_export(t_envarment **var);
 // void            execution_cmd(t_command         *list ,char **new, char **env);
 // void            execution_cmd(t_command         *list ,char **env);
 void			execution_cmd(t_command *list,char **new ,char **env);// char **new, char **env)
@@ -113,7 +113,7 @@ void			hundle_dredir_out(char	 	*file);
 
 /////////////////////////  her doc  //////////////////////////
 int 			herdoc_exist(t_command *list);
-int			handle_here_doc(t_command *tmp , char **env);
+int				handle_here_doc(t_command *tmp , char **env);
 t_here_doc  	*new_node_her(int idx , int i,char *file, int fd, bool expand);
 void    		add_back_node_her(t_here_doc **her, t_here_doc *new_her);
 

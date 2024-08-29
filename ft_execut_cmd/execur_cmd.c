@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 17:31:58 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/08/27 19:55:17 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/08/28 13:41:52 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,8 +191,8 @@ int handle_pipe(t_command *list, char **env)
                 hundle_redirections(tmp_cmd);
             }
 
-			if(built_in_exist(tmp_cmd) == 0)
-			{
+			// if(built_in_exist(tmp_cmd) == 0)
+			// {
 				char **new_args = ft_new_args(tmp_cmd->arg, tmp_cmd->doc);
 				char *ptr = path_command(tmp_cmd->content);
 				if (!ptr)
@@ -200,7 +200,7 @@ int handle_pipe(t_command *list, char **env)
 				
 				execve(ptr, new_args, env);
 				perror("execve failed");
-			}
+			// }
 				exit(EXIT_FAILURE);
 		}
 

@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/10 09:06:30 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/08/27 18:20:27 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/08/29 19:38:43 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void 	ft_echo(t_command *list, char **env)
 	}
 	while (list->arg[k])
 	{
-		printf("{...} %s", list->arg[k]);
+		printf("%s", list->arg[k]);
 		if (list->arg[k + 1] != NULL)
 			printf(" ");
 		k++;

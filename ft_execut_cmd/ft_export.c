@@ -6,19 +6,40 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 19:19:52 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/08/27 21:43:07 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/08/29 19:02:28 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-
-
 int	ft_isalnum_exp(int c)
 {
-	return ((c >= '0' && c <= '9')
-		|| (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_' || c == '<' || c == '>' );
+	return ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a'
+			&& c <= 'z') || (c == '_') || c == '<' || c == '>');
 }
+// int	test_exist(t_envarment *var, char **list)
+// {
+// 	t_envarment	*ptr;
+
+// 	ptr = var;
+// 	while (ptr)
+// 	{
+// 		if (ft_strcmp(ptr->var, list[0]) == 0)
+// 		{
+// 			if (ft_strcmp(ptr->data, list[1]) == 0)
+// 				return (0);
+// 			else
+// 			{
+// 				if (list[1][0] == '\0')
+// 					return (0);
+// 				ptr->data = list[1];
+// 				return (0);
+// 			}
+// 		}
+// 		ptr = ptr->next;
+// 	}
+// 	return (1);
+// }
 
 int	test_exist(t_envarment *var, char **list)
 {
@@ -97,7 +118,9 @@ char	**split_line(char *ptr)
 		arg[0] = first_word(ptr);
 		arg[1] = ft_strdup(ft_strchr(ptr, '=') + 1);
 		if (arg[1][0] == '\0')
+		{
 			arg[1] = ft_strdup("=");
+		}
 	}
 	else
 	{
@@ -113,19 +136,23 @@ char	**split_line(char *ptr)
 	return (arg);
 }
 
-void	print_export(t_envarment *var)
+void	print_export(t_envarment **var)
 {
-	while (var != NULL)
+	t_envarment	*ptr;
+
+	ptr = *var;
+	while (ptr != NULL)
 	{
-		if (var->data[0] == '\0')
-			printf("[declare -x]  %s\n", (char *)var->var);
-		else if (var->data[0] == '=' && var->data[1] == '\0')
-			printf("[declare -x]  %s=\"\"\n", (char *)var->var);
+		if (ptr->data[0] == '\0')
+			printf("[Declare -x]  %s\n", (char *)ptr->var);
+		else if (ptr->data[0] == '=' && ptr->data[1] == '\0')
+			printf("[Declare -x]  %s=\"\"\n", (char *)ptr->var);
 		else
-			printf("[declare -x]  %s=\"%s\"\n", (char *)var->var,
-				(char *)var->data);
-		var = var->next;
+			printf("[Declare -x]  %s=\"%s\"\n", (char *)ptr->var,
+				(char *)ptr->data);
+		ptr = ptr->next;
 	}
+	return ;
 }
 
 void	check_dolar_is(char *str, t_envarment *var, t_command *s)
@@ -150,8 +177,19 @@ void	check_dolar_is(char *str, t_envarment *var, t_command *s)
 		}
 	}
 	if (s->arg[2] == NULL || s->arg[2][0] == '\0')
-		print_export(var);
+		print_export(&var);
 	free(ptr);
+}
+
+int	exist_redir(char *ptr)
+{
+	if (ft_strcmp(ptr, ">") == 0)
+		return (1);
+	if (ft_strcmp(ptr, ">>") == 0)
+		return (1);
+	if (ft_strcmp(ptr, "<") == 0)
+		return (1);
+	return (0);
 }
 
 int	var_is_valid(char *ptr)
@@ -159,7 +197,6 @@ int	var_is_valid(char *ptr)
 	int		j;
 	char	**list;
 
-	printf("ptr +++++++++++++++ = %s\n", ptr);
 	if (ptr[0] == '=')
 	{
 		printf("bash: export: `%s': not a valid identifier\n", ptr);
@@ -210,23 +247,30 @@ void	ft_export(t_envarment *var, t_command *str)
 			check_dolar_is(str->arg[i], var, str);
 			return ;
 		}
-		if (var_is_valid(str->arg[i]) == 0)
+		if (exist_redir(str->arg[i]) == 1)
 		{
-			if (str->arg[i + 1] == NULL)
-				return ;
-			i++;
+			if (str->arg[i + 2] == NULL)
+				break ;
+			i = i + 2;
 		}
-		list = split_line(str->arg[i]);
-		printf("list[0] = %s\n", list[0]);
-		if (test_exist(var, list) == 0)
-			i++;
 		else
 		{
-			elem = new_node(list[0], list[1]);
-			add_back_node(&var, elem);
-			i++;
+			if (var_is_valid(str->arg[i]) == 0)
+			{
+				if (str->arg[i + 1] == NULL)
+					return ;
+			}
+			list = split_line(str->arg[i]);
+			if (test_exist(var, list) == 0)
+				i++;
+			else if (test_exist(var, list) == 1)
+			{
+				elem = new_node(list[0], list[1]);
+				add_back_node(&var, elem);
+				i++;
+			}
 		}
 	}
-	if (str->arg[1] == NULL)
-		print_export(var);
+	if (str->arg[1] == NULL || str->arg[1][0] == '\0'|| (exist_redir(str->arg[1]) == 1))
+		print_export(&var);
 }

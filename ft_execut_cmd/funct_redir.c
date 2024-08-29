@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 17:33:07 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/08/25 13:05:22 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/08/28 12:35:00 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ char	*git_type_redir(t_redirect *redir)
 			return ("<");
 		else if (redir->type == DREDIR_OUT)
 			return (">>");
-		// else if (redir->type == HERE_DOC)
-		// 	return ("<<");
+		else if (redir->type == HERE_DOC)
+			return ("<<");
 		return (NULL);
 	}
 }
