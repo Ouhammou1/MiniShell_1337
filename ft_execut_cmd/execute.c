@@ -6,21 +6,18 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/28 20:46:31 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/08/29 19:29:41 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/01 23:02:24 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-
-
 
 void	hundle_redirections(t_command *list)
 {
 	t_redirect	*tmp;
 
 	tmp = list->doc;
-	while (tmp != NULL )
+	while (tmp != NULL)
 	{
 		if (tmp->type == REDIR_OUT)
 		{
@@ -38,144 +35,132 @@ void	hundle_redirections(t_command *list)
 	}
 }
 
-void	built_in(t_envarment *var, t_command *list, char **env)
+void 		built_in(t_envarment *var, t_command *list)
 {
 	if (list == NULL)
 		return ;
 	if (ft_strcmp(list->content, "exit") == 0)
-		 (ft_exit(var, list));
+		(ft_exit(var, list));
 	if (ft_strcmp(list->content, "cd") == 0)
-		 (ft_cd(list));
+		(ft_cd(list));
 	if (ft_strcmp(list->content, "pwd") == 0)
-		 (ft_pwd(list));
+		(ft_pwd(list));
 	if (ft_strcmp(list->content, "export") == 0)
 	{
-		 (ft_export(var, list));
+		(ft_export(var, list));
 	}
 	if (ft_strcmp(list->content, "unset") == 0)
-		 (ft_unset(var, list));
+		(ft_unset(var, list));
 	if (ft_strcmp(list->content, "env") == 0)
-		 (ft_env(var));
+		(ft_env(var));
 	if (ft_strcmp(list->content, "echo") == 0)
-		 (ft_echo(list, env));
-	else
-		return ;
+		(ft_echo(list));
+
+	list->ar_env =  array_env(var);
 }
 
-void	execution_cmd(t_command *list,char **new ,char **env)
-{	
-	(void)list;
+void	execution_cmd(t_command *list, char **new)
+{
 	char	*ptr;
 
 	if (new[0][0] == '/')
 		ptr = new[0];
 	else
-		ptr = path_command(new[0]);
+		ptr = path_command(new[0] , list->ar_env);
 	if (!ptr)
 	{
 		ft_putstr_fd("command not found\n", 2);
 		exit(127);
 	}
-	if (execve(ptr, new , env) == -1)
+	if (execve(ptr, new, list->ar_env) == -1)
 		perror("execve");
 	if (access(ptr, X_OK) == -1)
 	{
-		printf("minishell: %s: No access to path \n", new[0]);	
+		printf("minishell: %s: No access to path \n", new[0]);
 		exit(126);
 	}
 }
 
-int 	built_in_exist( t_command *list) 
+int	built_in_exist(t_command *list)
 {
-	if(ft_strcmp(list->content, "exit") == 0)
-		return 1;
-	if(ft_strcmp(list->content, "cd") == 0)
-		return 1;
-	if(ft_strcmp(list->content, "pwd") == 0)
-		return 1;
-	if(ft_strcmp(list->content, "export") == 0)
-		return 1;
-	if(ft_strcmp(list->content, "unset") == 0)
-		return 1;
-	if(ft_strcmp(list->content, "env") == 0)
-		return 1;
-	if(ft_strcmp(list->content, "echo") == 0)
-		return 1;
-	return 0;
+	if (ft_strcmp(list->content, "exit") == 0)
+		return (1);
+	if (ft_strcmp(list->content, "cd") == 0)
+		return (1);
+	if (ft_strcmp(list->content, "pwd") == 0)
+		return (1);
+	if (ft_strcmp(list->content, "export") == 0)
+		return (1);
+	if (ft_strcmp(list->content, "unset") == 0)
+		return (1);
+	if (ft_strcmp(list->content, "env") == 0)
+		return (1);
+	if (ft_strcmp(list->content, "echo") == 0)
+		return (1);
+	return (0);
 }
 
-void ft_exute(t_envarment *var, t_command *list, char **env)
+void	ft_exute(t_envarment *var, t_command *list, char **env)
 {
+	int		fd;
+	int		status;
+	int		pid;
 	(void)var;
-    int fd;
-    int status;
-    char **new_args;
 	
-    if (list == NULL || list->content == NULL || list->arg[0] == NULL) 
-        return;
-
-    if (built_in_exist(list) == 1 && pipe_exist(list) == 0 && herdoc_exist(list) == 0 && test_redir_here_doc(list) == 0)
-    {
-		if(test_redir_here_doc(list) == 1 ) 
+	if (list == NULL  )
+		return ;
+	list->ar_env =  array_env(var);
+	if (built_in_exist(list) == 1 && pipe_exist(list ) == 0
+		&& herdoc_exist(list) == 0 && test_redir_here_doc(list) == 0)
+	{
+		if (test_redir_here_doc(list) == 1)
 			hundle_redirections(list);
-        built_in(var, list, env);
-        return; 
-    }
-    int pid = fork();
-    if (pid < 0)
-    {
-        perror("fork");
-        return;
-    }
-    else if (pid == 0)
-    {
-		
-        if (herdoc_exist(list) ==1 )// && pipe_exist(list) == 0)
-        {
-			
-			// printf("						1111111111111111\n\n");
- 			fd = handle_here_doc(list, env);
-
-            if (fd != -1)
-            {
-                dup2(fd, STDIN_FILENO);
-                close(fd);
-            }
-			
-			new_args = ft_new_args(list->arg, list->doc);
-            execution_cmd(list, new_args, env);
-        }
-
-        if (pipe_exist(list) == 1)
-        {
-			// printf("                      33333333333333\n\n");
-
-            fd = handle_pipe(list, env);
-            if (fd != -1)
-            {
-                dup2(fd, STDOUT_FILENO);
-                close(fd);
-            }
-        }
-        else ///if (pipe_exist(list) == 0 && herdoc_exist(list) == 0)
-        {
-			// printf("                    444444444444444\n\n");
-            if (test_redir_here_doc(list))
-            {
-                hundle_redirections(list);
-				built_in(var, list, env);
-            }
-			if(built_in_exist(list) == 0)
+		built_in(var, list);
+		return ;
+	}
+	pid = fork();
+	if (pid < 0)
+	{
+		perror("fork");
+		return ;
+	}
+	else if (pid == 0)
+	{
+		if (herdoc_exist(list) == 1)
+		{
+			if( pipe_exist(list) == 1 )
 			{
-				new_args = ft_new_args(list->arg, list->doc);
-				execution_cmd(list, new_args, env);				
+				handle_pipe(list, var);
 			}
-        }
-        exit(EXIT_SUCCESS);
-    }
-    else
-    {
-        if (wait(&status) == -1)
-            perror("wait");
-    }
+			else
+			{
+				fd = handle_here_doc(list, env);
+				if (fd != -1)
+				{
+					dup2(fd, STDIN_FILENO);
+					close(fd);
+					execution_cmd(list, list->arg );
+					hundle_redirections(list);
+				}
+			}
+		}
+		else if (pipe_exist(list  ) == 1 && herdoc_exist(list) == 0)
+			handle_pipe(list, var);
+		else 
+		{
+			if (test_redir_here_doc(list))
+			{
+				hundle_redirections(list);
+				built_in(var, list);
+			}
+			if (built_in_exist(list) == 0)
+				execution_cmd(list, list->arg);
+		}
+		exit(EXIT_SUCCESS);
+	}
+	else
+	{
+		if (wait(&status) == -1)
+			perror("wait");
+	}
 }

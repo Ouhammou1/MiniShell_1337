@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 18:00:47 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/08/27 20:09:24 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/01 14:07:34 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,38 @@ int	ft_check_command(t_splitor *tmp_x)
 void	ft_count_d_s(t_splitor **tmp, int *count)
 {
 	while ((*tmp) != NULL && ((*tmp)->state == D || (*tmp)->state == S))
+	{
+		if ((*tmp) != NULL)
+			(*tmp) = (*tmp)->next;
+		while ((*tmp) != NULL && (*tmp)->state == G && ((*tmp)->type == '\"'
+				|| (*tmp)->type == '\''))
+		{
+			while (((*tmp) != NULL && (*tmp)->state == G)
+				&& ((*tmp)->type == '\"' || (*tmp)->type == '\''))
+				(*tmp) = (*tmp)->next;
+			if ((*tmp) != NULL)
+				(*tmp) = (*tmp)->next;
+		}
+		if ((*tmp) != NULL)
+			(*tmp) = (*tmp)->next;
+	}
+	(*count)++;
+	// printf("***Count_in_double_and single : %d\n", *count);
+}
+
+void	ft_count_general(t_splitor **tmp, int *count)
+{
+	if ((*tmp) != NULL)
 		(*tmp) = (*tmp)->next;
+	while ((*tmp) != NULL && (*tmp)->state == G && ((*tmp)->type == '\"'
+			|| (*tmp)->type == '\''))
+	{
+		while (((*tmp) != NULL && (*tmp)->state == G) && ((*tmp)->type == '\"'
+				|| (*tmp)->type == '\''))
+			(*tmp) = (*tmp)->next;
+		if ((*tmp) != NULL)
+			(*tmp) = (*tmp)->next;
+	}
 	(*count)++;
 }
 
@@ -41,15 +72,20 @@ void	ft_count_parameters(t_splitor *tmp_x, int *count)
 		(*count)++;
 	else if (tmp != NULL)
 	{
+		ft_skip_spaces_in_count(&tmp);
 		while (tmp != NULL && !(tmp->type == '|' && tmp->state == G))
 		{
-			ft_skip_spaces(&tmp);
-			if (tmp != NULL && tmp->state == G && tmp->type != '\"'
-				&& tmp->type != '\'' && tmp->type != '|')
+			if (tmp->type == '<' || tmp->type == '>' || tmp->type == DREDIR_OUT
+				|| tmp->type == HERE_DOC)
 			{
-				(*count)++;
 				tmp = tmp->next;
+				ft_skip_spaces_in_count(&tmp);
+				if (tmp != NULL)
+					tmp = tmp->next;
 			}
+			else if ((tmp) != NULL && (tmp)->state == G && ((tmp)->type != '\"'
+					&& (tmp)->type != '\'') && (tmp)->type != ' ')
+				ft_count_general(&tmp, count);
 			else if (tmp != NULL && (tmp->state == D || tmp->state == S))
 				ft_count_d_s(&tmp, count);
 			else if (tmp != NULL && tmp->type != '|')
@@ -58,75 +94,54 @@ void	ft_count_parameters(t_splitor *tmp_x, int *count)
 	}
 }
 
-void	ft_command(t_splitor **x, t_command **cmd)
+void	ft_command(t_splitor **x, t_command **cmd, t_envarment *my_env)
 {
 	int			count;
 	t_splitor	*tmp_x;
 	t_command	*tmp_cmd;
 	// int			i;
-	// int			l;
 
-	// i = 0;
+	// cmd = NULL;
 	tmp_x = *x;
+	tmp_cmd = *cmd;
+	// printf(">>>>>>>>>>>>>>>>>>HIII>>>>>>>>>>>>>>>>\n");
 	while (tmp_x != NULL)
 	{
 		count = 0;
 		ft_count_parameters(tmp_x, &count);
 		// printf("Count: %d\n", count);
-		ft_add_command(cmd, ft_new_command(count, &tmp_x));
+		ft_add_command(cmd, ft_new_command(count, &tmp_x, my_env));
 	}
-	tmp_cmd = *cmd;
+	ft_fill_red(cmd, x, my_env);
+	ft_fill_her(cmd);
 	// i = 0;
+	tmp_cmd = *cmd;
 	// while (tmp_cmd != NULL)
 	// {
 	// 	printf("\033[0;32m\n\t++++++++++++++   Command   ++++++++++++++++\n\033[0m");
-	// 	printf("Content :	 %s \n", tmp_cmd->content);
-	// 	if (tmp_cmd->arg[i] != NULL)
-	// 		printf("Argument :	");
-	// 	while (tmp_cmd->arg[i] != NULL)
+	// 	if (tmp_cmd->content != NULL)
 	// 	{
-	// 		printf(" [%s] ", tmp_cmd->arg[i]);
-	// 		i++;
+	// 		printf("Content :		%s \n", tmp_cmd->content);
 	// 	}
-	// 	i=0;
+	// 	if (tmp_cmd->arg != NULL && tmp_cmd->arg[0] != NULL)
+	// 	{
+	// 		printf("Argument :	");
+	// 		i = 0; // Initialize i before using it
+	// 		while (tmp_cmd->arg[i] != NULL)
+	// 		{
+	// 			printf(" [%s] ", tmp_cmd->arg[i]);
+	// 			i++;
+	// 		}
+	// 	}
 	// 	printf("\n");
 	// 	printf("doc :		\n");
 	// 	print_redirect_list(tmp_cmd->doc);
 	// 	printf("\n");
-	// 	l = 0;
-	// 	while (tmp_cmd->store_her[l] != NULL)
-	// 	{
-	// 		printf("len  = %d     store:   %s\n",tmp_cmd->len , tmp_cmd->store_her[l]);
-	// 		l++;
-	// 	}
-	// 	l = 0;
+	// 	i = 0;
+	// 	printf("HerDoc :		\n");
+	// 	if (tmp_cmd->store_her != NULL && tmp_cmd->store_her[0] != NULL)
+	// 		while (tmp_cmd->store_her[i] != NULL)
+	// 			printf("HerDoc ==>> %s \n\n", tmp_cmd->store_her[i++]);
 	// 	tmp_cmd = tmp_cmd->next;
 	// }
 }
-// while (tmp_cmd != NULL)
-// {
-// 	printf("cmd ------------------<><><><>---------------------- \n");
-// 	printf("content: %s \n", tmp_cmd->content);
-// 	if (tmp_cmd->arg[i] != NULL)
-// 		printf("argument: ");
-// 	while (tmp_cmd->arg[i] != NULL)
-// 	{
-// 		printf(" %s ", tmp_cmd->arg[i]);
-// 		i++;
-// 	}
-// 	printf("\n");
-// 	printf("t_command ----> doc:\n");
-// 	printf("dir_in: %d\n", tmp_cmd->doc->dir_in);
-// 	printf("dir_out: %d\n", tmp_cmd->doc->dir_out);
-// 	printf("rdir: %d\n", tmp_cmd->doc->rdir);
-// 	printf("doc_here: %d\n", tmp_cmd->doc->doc_here);
-// 	i = 0;
-// 	printf("///////////////////////////////////////////////////////////n\n");
-// 	// while (tmp_cmd->doc->store[i] != NULL)
-// 	// {
-// 	// 	printf("store: %s\n", tmp_cmd->doc->store[i]);
-// 	// 	i++;
-// 	// }
-
-// 	tmp_cmd = tmp_cmd->next;
-// }

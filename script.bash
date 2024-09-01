@@ -17,6 +17,9 @@ brew --prefix readline
 export LDFLAGS="-L/goinfre/bouhammo/homebrew/opt/readline/lib"
 export CPPFLAGS="-I/goinfre/bouhammo/homebrew/opt/readline/include"
 
+# export LDFLAGS="-L/goinfre/bouhammo/homebrew/opt/readline/lib"
+# export CPPFLAGS="-I/goinfre/bouhammo/homebrew/opt/readline/include"
+
 
 
 source ~/.zshrc

@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/17 13:08:06 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/08/25 19:34:12 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/01 09:14:00 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,18 +43,49 @@ void	handle_sig(int sig)
 	if (sig == SIGINT)
 	{
 		printf("\n");
-		// rl_replace_line("", 0);
+		rl_replace_line("", 0);
 		rl_on_new_line();
 		rl_redisplay();
 	}
 }
+int	ft_ambiguous(t_splitor *x, t_command *cmd, t_envarment *my_env)
+{
+	t_splitor	*tmp_x;
 
+	(void)cmd;
+	(void)my_env;
+	tmp_x = x;
+	while (tmp_x != NULL)
+	{
+		if (tmp_x->type == '<' || tmp_x->type == '>'
+			|| tmp_x->type == DREDIR_OUT)
+		{
+			if (tmp_x->is_amb == 1)
+				return (1);
+		}
+		tmp_x = tmp_x->next;
+	}
+	return (0);
+}
 void	ft_initialize(t_splitor *x, t_command *cmd, t_envarment *my_env,
 		char **env)
 {
-	ft_check_env(&x, my_env);
-	ft_command(&x, &cmd);
-	ft_exute(my_env, cmd, env);
+	// ft_check_env(&x, my_env);
+	// if (ft_ambiguous(x, cmd, my_env))
+	// {
+	// 	ft_putstr_fd("Syntax Error:\n", 2);
+	// 	return ;
+	// }
+	if (x != NULL && my_env != NULL)
+	// Ensure pointers are not NULL
+	{
+		// ft_check_env(&x, my_env);
+		ft_command(&x, &cmd, my_env);
+		ft_exute(my_env, cmd, env);
+	}
+	(void)env;
+	(void)my_env;
+	(void)cmd;
 	ft_free_lexer(&x);
 }
 void	ft_reader(t_splitor *x, t_command *cmd, t_envarment *my_env, char **env)
@@ -67,7 +98,9 @@ void	ft_reader(t_splitor *x, t_command *cmd, t_envarment *my_env, char **env)
 		if (!str_input)
 		{
 			printf("exit\n");
-			//
+			ft_free_command(cmd);
+			ft_free_lexer(&x);
+			ft_free_env(&my_env);
 			exit(0);
 		}
 		if (ft_strlen(str_input) > 0)
@@ -85,7 +118,7 @@ void	ft_reader(t_splitor *x, t_command *cmd, t_envarment *my_env, char **env)
 		free(str_input);
 	}
 }
-void ft_d(int signal)
+void	ft_d(int signal)
 {
 	printf("fdf\n");
 	if (signal == SIGQUIT)
@@ -98,6 +131,7 @@ int	main(int ac, char **av, char **env)
 	t_command	*cmd;
 
 	signal(SIGINT, handle_sig);
+	// signal(SIGQUIT, SIG_IGN);
 	(void)ac;
 	(void)av;
 	my_env = NULL;
