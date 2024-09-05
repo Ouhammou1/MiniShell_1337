@@ -27,10 +27,8 @@ void	ft_cd(t_command *list)
 		path = list->arg[1];
 		if (path[0] == '~')
 			path = getenv("HOME");
-			
 		if (ft_strcmp(path, "--") == 0)
 			path = getenv("HOME");
-			
 		if (path[0] == '-' && path[1] == '\0')
 		{
 			path = getenv("OLDPWD");

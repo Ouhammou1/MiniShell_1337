@@ -23,7 +23,7 @@ char	*ft_expand(char *arg, t_envarment *my_env)
 	s = NULL;
 	while (arg[i])
 	{
-		if (arg[i+1] == '?')
+		if (arg[i + 1] == '?')
 		{
 			// printf("-+--------------------- %d\n ", g_exit_status);
 			s = ft_itoa(g_exit_status);
@@ -326,6 +326,6 @@ t_envarment	*ft_stock_envarment(char **env)
 		add_back_node(&var, elem);
 		i++;
 	}
-		ft_free_split(list);
+	ft_free_split(list);
 	return (var);
 }

@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 07:58:38 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/08/31 14:42:54 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/05 10:06:18 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,14 +88,32 @@ typedef struct s_command
 	struct s_command	*next;
 }						t_command;
 
+
 typedef struct s_here_doc
 {
-	int					indx_cmd;
-	int					indx;
 	char				*store;
 	int					fd;
-	bool				is_expanded;
+	char 				*heredoc_file;
+	int 				idx;
 	struct s_here_doc	*next;
 }						t_here_doc;
+
+
+
+
+
+
+
+
+
+// typedef struct s_here_doc
+// {
+// 	int					indx_cmd;
+// 	int					indx;
+// 	char				*store;
+// 	int					fd;
+// 	bool				is_expanded;
+// 	struct s_here_doc	*next;
+// }						t_here_doc;
 
 #endif

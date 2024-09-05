@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/25 14:49:25 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/09/01 22:33:19 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/04 21:52:15 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,8 +127,9 @@ void			hundle_dredir_out(char	 	*file);
 
 /////////////////////////  her doc  //////////////////////////
 int 			herdoc_exist(t_command *list);
-int 			handle_here_doc(t_command *tmp , char **env);
-t_here_doc  	*new_node_her(int idx , int i,char *file, int fd, bool expand);
+void 			handle_here_doc(t_command *tmp , char **env);
+// t_here_doc  	*new_node_her(int idx , int i,char *file, int fd, bool expand);
+t_here_doc	*new_node_her(char *file, int fd  , int x);
 void    		add_back_node_her(t_here_doc **her, t_here_doc *new_her);
 
 
@@ -151,7 +152,7 @@ void       	    child_process(int ** pipefd,int  i,t_command *tmp_cmd,char **env
 
 /////////////////////////  signal  //////////////////////////
 
-
+int  	hundle_file_herdoc(t_command *list);
 
 
 

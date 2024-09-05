@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/28 20:46:31 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/09/01 23:02:24 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/04 22:53:18 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	hundle_redirections(t_command *list)
 	}
 }
 
-void 		built_in(t_envarment *var, t_command *list)
+void	built_in(t_envarment *var, t_command *list)
 {
 	if (list == NULL)
 		return ;
@@ -55,8 +55,7 @@ void 		built_in(t_envarment *var, t_command *list)
 		(ft_env(var));
 	if (ft_strcmp(list->content, "echo") == 0)
 		(ft_echo(list));
-
-	list->ar_env =  array_env(var);
+	list->ar_env = array_env(var);
 }
 
 void	execution_cmd(t_command *list, char **new)
@@ -66,7 +65,7 @@ void	execution_cmd(t_command *list, char **new)
 	if (new[0][0] == '/')
 		ptr = new[0];
 	else
-		ptr = path_command(new[0] , list->ar_env);
+		ptr = path_command(new[0], list->ar_env);
 	if (!ptr)
 	{
 		ft_putstr_fd("command not found\n", 2);
@@ -102,15 +101,15 @@ int	built_in_exist(t_command *list)
 
 void	ft_exute(t_envarment *var, t_command *list, char **env)
 {
-	int		fd;
-	int		status;
-	int		pid;
+	// int	fd;
+	int	status;
+	int	pid;
+
 	(void)var;
-	
-	if (list == NULL  )
+	if (list == NULL)
 		return ;
-	list->ar_env =  array_env(var);
-	if (built_in_exist(list) == 1 && pipe_exist(list ) == 0
+	list->ar_env = array_env(var);
+	if (built_in_exist(list) == 1 && pipe_exist(list) == 0
 		&& herdoc_exist(list) == 0 && test_redir_here_doc(list) == 0)
 	{
 		if (test_redir_here_doc(list) == 1)
@@ -128,25 +127,23 @@ void	ft_exute(t_envarment *var, t_command *list, char **env)
 	{
 		if (herdoc_exist(list) == 1)
 		{
-			if( pipe_exist(list) == 1 )
+			handle_here_doc(list, env);
+
+			if (pipe_exist(list) == 1)
 			{
-				handle_pipe(list, var);
+				handle_pipe(list, var );
 			}
 			else
 			{
-				fd = handle_here_doc(list, env);
-				if (fd != -1)
-				{
-					dup2(fd, STDIN_FILENO);
-					close(fd);
-					execution_cmd(list, list->arg );
-					hundle_redirections(list);
-				}
+				hundle_redirections(list);
+				execution_cmd(list, list->arg);
 			}
 		}
-		else if (pipe_exist(list  ) == 1 && herdoc_exist(list) == 0)
+		else if (pipe_exist(list) == 1 && herdoc_exist(list) == 0)
+		{
 			handle_pipe(list, var);
-		else 
+		}
+		else
 		{
 			if (test_redir_here_doc(list))
 			{

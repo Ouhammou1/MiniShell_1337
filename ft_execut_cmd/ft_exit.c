@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/18 23:39:14 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/08/25 17:12:51 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/01 23:39:43 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ void	ft_free_when_exit(t_envarment *var, char *str, int fd, t_command *cmd)
 	ft_free_command(cmd);
 	ft_free_env(&var);
 }
+
 void	ft_exit(t_envarment *var, t_command *cmd)
 {
 	int	len;
