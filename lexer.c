@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rel-mora <rel-mora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/25 15:25:28 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/09/01 14:08:04 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/04 12:50:49 by rel-mora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,8 +62,9 @@ void	ft_her_dir(t_splitor **x, t_idx *var, char *str_input)
 void	ft_get_char(char *str_input, t_idx *var, t_splitor **x)
 {
 	var->len++;
-	if (str_input[var->i] == '$' && ft_isalnum(str_input[var->i + 1])
-		&& !ft_check_input(str_input[var->i + 1]))
+	if (str_input[var->i] && str_input[var->i] == '$'
+		&& ft_isalnum(str_input[var->i + 1]) && !ft_check_input(str_input[var->i
+			+ 1]))
 	{
 		// printf("1\n");
 		while (str_input[var->i] && !ft_check_input(str_input[var->i + 1])
@@ -76,7 +77,8 @@ void	ft_get_char(char *str_input, t_idx *var, t_splitor **x)
 		ft_add(x, ft_lstnew(ft_substr(str_input, var->start, var->len),
 				var->len, ENV, var->state));
 	}
-	else if (str_input[var->i] == '$' && str_input[var->i + 1] == '?')
+	else if (str_input[var->i] && str_input[var->i] == '$' && str_input[var->i
+		+ 1] == '?')
 	{
 		var->state = ft_get_state(var, str_input[var->i]);
 		var->i++;
@@ -86,24 +88,27 @@ void	ft_get_char(char *str_input, t_idx *var, t_splitor **x)
 		// printf("2\n");
 		// printf("%s\n", str_input);
 	}
-	else if (str_input[var->i] == '$' && !ft_isalnum(str_input[var->i + 1])
+	else if (str_input[var->i] && str_input[var->i] == '$'
+		&& !ft_isalnum(str_input[var->i + 1])
 		&& !ft_check_input(str_input[var->i + 1]))
 	{
-		while (str_input[var->i] && !ft_check_input(str_input[var->i + 1]
-				&& !ft_isalnum(str_input[var->i + 1])))
+		// printf("|%d|%d|\n", var->start, var->len);
+		while (str_input[var->i] && !ft_isalnum(str_input[var->i + 1]))
 		{
 			var->state = ft_get_state(var, str_input[var->i]);
 			var->i++;
 			var->len++;
 		}
+		// printf("|%d|%d|\n", var->start, var->len);
 		ft_add(x, ft_lstnew(ft_substr(str_input, var->start, var->len),
 				var->len, ENV, var->state));
 		// printf("3\n");
 	}
 	else
 	{
-		if ((str_input[var->i] == '>' && str_input[var->i + 1] == '>')
-			|| (str_input[var->i] == '<' && str_input[var->i + 1] == '<'))
+		if (str_input[var->i] && ((str_input[var->i] == '>' && str_input[var->i
+					+ 1] == '>') || (str_input[var->i] == '<'
+					&& str_input[var->i + 1] == '<')))
 			ft_her_dir(x, var, str_input);
 		else
 			ft_add(x, ft_lstnew(ft_substr(str_input, var->start, var->len),
@@ -116,11 +121,13 @@ void	ft_get_char(char *str_input, t_idx *var, t_splitor **x)
 int	ft_lexer(char *str_input, t_splitor **x)
 {
 	t_idx	var;
+	int		str_input_len;
 
+	str_input_len = strlen(str_input);
 	var.i = 0;
 	var.in_d = -1;
 	var.in_s = -1;
-	while (str_input[var.i])
+	while (var.i < str_input_len)
 	{
 		var.start = var.i;
 		var.len = 0;

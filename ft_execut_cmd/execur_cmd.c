@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/14 17:31:58 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/09/05 10:04:26 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/05 11:10:21 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int	num_pipe(t_command *list)
 	i = 0;
 	while (tmp)
 	{
-		if (tmp->content[0] == '|')
+		if (tmp->is_pipe == 1)
 			i++;
 		tmp = tmp->next;
 	}

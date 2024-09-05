@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 07:58:38 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/09/05 10:06:18 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/05 11:02:39 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define STRUCTURES_H
 # include <stdbool.h>
 
+int g_exit_status;
 typedef struct s_idx
 {
 	int					i;
@@ -74,6 +75,7 @@ typedef struct s_envarment
 	struct s_envarment	*next;
 }						t_envarment;
 
+
 typedef struct s_command
 {
 	char				*content;
@@ -96,15 +98,22 @@ typedef struct s_here_doc
 	char 				*heredoc_file;
 	int 				idx;
 	struct s_here_doc	*next;
-}						t_here_doc;
+}					t_here_doc;
 
 
-
-
-
-
-
-
+// typedef struct s_command
+// {
+// 	char				*content;
+// 	char				**arg;
+// 	t_redirect			*doc;
+// 	char				**store_her;
+// 	char 				**ar_env;
+// 	int					is_amb;
+// 	int 				is_exp;
+// 	int					is_pipe;
+// 	int					len;
+// 	struct s_command	*next;
+// }						t_command;
 
 // typedef struct s_here_doc
 // {

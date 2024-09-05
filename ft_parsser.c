@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_parsser.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rel-mora <rel-mora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 18:00:47 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/09/01 14:07:34 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/04 12:51:20 by rel-mora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,9 +34,6 @@ void	ft_count_d_s(t_splitor **tmp, int *count)
 		while ((*tmp) != NULL && (*tmp)->state == G && ((*tmp)->type == '\"'
 				|| (*tmp)->type == '\''))
 		{
-			while (((*tmp) != NULL && (*tmp)->state == G)
-				&& ((*tmp)->type == '\"' || (*tmp)->type == '\''))
-				(*tmp) = (*tmp)->next;
 			if ((*tmp) != NULL)
 				(*tmp) = (*tmp)->next;
 		}
@@ -44,7 +41,6 @@ void	ft_count_d_s(t_splitor **tmp, int *count)
 			(*tmp) = (*tmp)->next;
 	}
 	(*count)++;
-	// printf("***Count_in_double_and single : %d\n", *count);
 }
 
 void	ft_count_general(t_splitor **tmp, int *count)
@@ -72,24 +68,52 @@ void	ft_count_parameters(t_splitor *tmp_x, int *count)
 		(*count)++;
 	else if (tmp != NULL)
 	{
-		ft_skip_spaces_in_count(&tmp);
+		if ((tmp != NULL && tmp->next != NULL) && ((tmp->type == '\''
+					&& tmp->next->type == '\'') || (tmp->type == '\"'
+					&& tmp->next->type == '\"')))
+		{
+			(*count)++;
+			tmp = tmp->next;
+		}
 		while (tmp != NULL && !(tmp->type == '|' && tmp->state == G))
 		{
 			if (tmp->type == '<' || tmp->type == '>' || tmp->type == DREDIR_OUT
 				|| tmp->type == HERE_DOC)
 			{
 				tmp = tmp->next;
-				ft_skip_spaces_in_count(&tmp);
+				ft_skip_spaces(&tmp);
+				if ((tmp != NULL && tmp->next != NULL) && ((tmp->type == '\''
+							&& tmp->next->type == '\'') || (tmp->type == '\"'
+							&& tmp->next->type == '\"')))
+				{
+					// (*count)++;
+					tmp = tmp->next;
+				}
+				else
+					ft_skip_spaces_in_count(&tmp);
 				if (tmp != NULL)
 					tmp = tmp->next;
 			}
+			if ((tmp != NULL && tmp->next != NULL) && ((tmp->type == '\''
+						&& tmp->next->type == '\'') || (tmp->type == '\"'
+						&& tmp->next->type == '\"')))
+			{
+				(*count)++;
+				tmp = tmp->next;
+			}
 			else if ((tmp) != NULL && (tmp)->state == G && ((tmp)->type != '\"'
 					&& (tmp)->type != '\'') && (tmp)->type != ' ')
+			{
 				ft_count_general(&tmp, count);
+			}
 			else if (tmp != NULL && (tmp->state == D || tmp->state == S))
+			{
 				ft_count_d_s(&tmp, count);
+			}
 			else if (tmp != NULL && tmp->type != '|')
+			{
 				tmp = tmp->next;
+			}
 		}
 	}
 }
@@ -115,7 +139,7 @@ void	ft_command(t_splitor **x, t_command **cmd, t_envarment *my_env)
 	ft_fill_red(cmd, x, my_env);
 	ft_fill_her(cmd);
 	// i = 0;
-	tmp_cmd = *cmd;
+	// tmp_cmd = *cmd;
 	// while (tmp_cmd != NULL)
 	// {
 	// 	printf("\033[0;32m\n\t++++++++++++++   Command   ++++++++++++++++\n\033[0m");
@@ -136,12 +160,17 @@ void	ft_command(t_splitor **x, t_command **cmd, t_envarment *my_env)
 	// 	printf("\n");
 	// 	printf("doc :		\n");
 	// 	print_redirect_list(tmp_cmd->doc);
-	// 	printf("\n");
+	// 	// printf("\n");
 	// 	i = 0;
 	// 	printf("HerDoc :		\n");
 	// 	if (tmp_cmd->store_her != NULL && tmp_cmd->store_her[0] != NULL)
 	// 		while (tmp_cmd->store_her[i] != NULL)
-	// 			printf("HerDoc ==>> %s \n\n", tmp_cmd->store_her[i++]);
+	// 		{
+	// 			if (tmp_cmd->store_her[i] == '\0')
+	// 				printf("____in herdoc print_________\n");
+	// 			printf("HerDoc ==>> %s \n\n", tmp_cmd->store_her[i]);
+	// 			i++;
+	// 		}
 	// 	tmp_cmd = tmp_cmd->next;
 	// }
 }

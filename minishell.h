@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/25 14:49:25 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/09/04 21:52:15 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/05 11:01:51 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@
 # include <unistd.h>
 
 // function we use
-int g_exit_status;
 
 //////////////////////////////  Parsser  /////////////////////////////////
 // ---------
@@ -84,8 +83,10 @@ int			ft_check_command(t_splitor *tmp_x);
 void		ft_skip_spaces(t_splitor **tmp_x);
 void	ft_skip_spaces_in_count(t_splitor **tmp_x);
 
-void		ft_double_and_sigle(t_splitor **tmp_x, int *i,
-				t_command **new_node, t_envarment *my_env);
+void ft_skip_general(t_splitor **tmp_x, int *i, t_command **new_node, t_envarment *my_env);
+
+void ft_double_and_sigle(t_splitor **tmp_x, int *i,
+                         t_command **new_node, t_envarment *my_env);
 // ---------
 void		ft_fill_red(t_command **cmd, t_splitor **x, t_envarment *my_env);
 void		ft_fill_her(t_command **new_node);
@@ -93,7 +94,6 @@ void		ft_check_doc(t_command **new_node);
 t_redirect	*ft_new_redir(void *content, t_token type);
 void		ft_add_redir(t_redirect **lst, t_redirect *new);
 t_redirect	*ft_last_redir(t_redirect *lst);
-
 
 
 //////////////////////  Execution  ////////////////////////
@@ -168,7 +168,6 @@ void            ft_echo(t_command *list);
 // void            ft_echo_flag(t_command *list , int k );
 void			ft_exit(t_envarment *var ,t_command *list);
 char 			**array_env(t_envarment *var);
-
 
 
 #endif

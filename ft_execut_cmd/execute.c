@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/28 20:46:31 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/09/04 22:53:18 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/05 12:14:01 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,8 @@ void	execution_cmd(t_command *list, char **new)
 {
 	char	*ptr;
 
+	if(list == NULL || new == NULL || new[0] == NULL || list->arg == NULL)
+		return ;	
 	if (new[0][0] == '/')
 		ptr = new[0];
 	else
@@ -104,7 +106,9 @@ void	ft_exute(t_envarment *var, t_command *list, char **env)
 	// int	fd;
 	int	status;
 	int	pid;
+	int heredoc_fd;
 
+	heredoc_fd = -1;
 	(void)var;
 	if (list == NULL)
 		return ;
@@ -135,6 +139,15 @@ void	ft_exute(t_envarment *var, t_command *list, char **env)
 			}
 			else
 			{
+				
+				heredoc_fd = hundle_file_herdoc(list);
+				if(heredoc_fd != -1)
+				{
+					dup2(heredoc_fd, STDIN_FILENO);
+					close(heredoc_fd);
+				}
+
+				
 				hundle_redirections(list);
 				execution_cmd(list, list->arg);
 			}

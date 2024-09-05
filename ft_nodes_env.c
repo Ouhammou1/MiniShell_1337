@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_nodes_env.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rel-mora <rel-mora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 08:13:33 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/09/01 14:05:27 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/04 13:51:31 by rel-mora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,12 +25,24 @@ char	*ft_expand(char *arg, t_envarment *my_env)
 	{
 		if (arg[i + 1] == '?')
 		{
-			// printf("-+--------------------- %d\n ", g_exit_status);
-			s = ft_itoa(g_exit_status);
+			s = ft_strdup(ft_itoa(g_exit_status));
+			break ;
+		}
+		else if (!ft_isalnum(arg[2]))
+		{
+			// printf("______________df\n");
+			return (s = ft_strdup(""), s);
+		}
+		else if (arg[1] == '\0')
+		{
+			// printf("^^^^^^^^^^^^\n");
+			return (s = ft_strdup("$"), s);
 		}
 		else if (arg[i] == '$')
 		{
 			i++;
+			if (arg[i] == '\0')
+				break ;
 			// printf("_____1________\n");
 			tmp_env = my_env;
 			while (tmp_env != NULL)
@@ -324,8 +336,9 @@ t_envarment	*ft_stock_envarment(char **env)
 		list = ft_split(env[i], '=');
 		elem = new_node(list[0], list[1]);
 		add_back_node(&var, elem);
+		free(list);
+
 		i++;
 	}
-	ft_free_split(list);
 	return (var);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_handle_synx.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rel-mora <rel-mora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 07:47:51 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/09/01 14:04:48 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/02 19:08:25 by rel-mora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	ft_check_between(t_splitor **start)
 			if ((*start) != NULL)
 				(*start) = (*start)->next;
 			ft_skip_spaces(&(*start));
-			if ((*start) == NULL ||  ((*start)->type == '|' && (ft_condition(*start))))
+			if ((*start) == NULL ||  ((*start)->type == '|' && (ft_condition(*start)) && (*start)->state == G))
 			{
 				// printf("Hi i'm in ft_check_between\n");
 				return (1);
