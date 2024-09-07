@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   structures.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rel-mora <rel-mora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 07:58:38 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/09/05 11:02:39 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/05 15:09:57 by rel-mora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,11 +76,23 @@ typedef struct s_envarment
 }						t_envarment;
 
 
+
+typedef struct s_here_doc
+{
+	char				*store;
+	int					fd;
+	char 				*heredoc_file;
+	int 				idx;
+	int 				expad;
+	struct s_here_doc	*next;
+}					t_here_doc;
+
 typedef struct s_command
 {
 	char				*content;
 	char				**arg;
 	t_redirect			*doc;
+	t_here_doc			*her;
 	char				**store_her;
 	char 				**ar_env;
 	int					is_amb;
@@ -89,40 +101,5 @@ typedef struct s_command
 	int					len;
 	struct s_command	*next;
 }						t_command;
-
-
-typedef struct s_here_doc
-{
-	char				*store;
-	int					fd;
-	char 				*heredoc_file;
-	int 				idx;
-	struct s_here_doc	*next;
-}					t_here_doc;
-
-
-// typedef struct s_command
-// {
-// 	char				*content;
-// 	char				**arg;
-// 	t_redirect			*doc;
-// 	char				**store_her;
-// 	char 				**ar_env;
-// 	int					is_amb;
-// 	int 				is_exp;
-// 	int					is_pipe;
-// 	int					len;
-// 	struct s_command	*next;
-// }						t_command;
-
-// typedef struct s_here_doc
-// {
-// 	int					indx_cmd;
-// 	int					indx;
-// 	char				*store;
-// 	int					fd;
-// 	bool				is_expanded;
-// 	struct s_here_doc	*next;
-// }						t_here_doc;
 
 #endif

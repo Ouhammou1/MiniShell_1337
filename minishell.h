@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/25 14:49:25 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/09/05 11:01:51 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/07 15:02:42 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,6 @@ t_envarment	*new_node(void *var, void *data);
 void		add_back_node(t_envarment **lst, t_envarment *new);
 t_envarment	*ft_stock_envarment(char **env);
 char		*ft_expand(char *arg, t_envarment *my_env);
-void		ft_check_env(t_splitor **x, t_envarment *my_env);
 // ---------
 void		ft_command(t_splitor **x, t_command **cmd, t_envarment *env);
 void		ft_add_command(t_command **lst, t_command *new);
@@ -94,6 +93,7 @@ void		ft_check_doc(t_command **new_node);
 t_redirect	*ft_new_redir(void *content, t_token type);
 void		ft_add_redir(t_redirect **lst, t_redirect *new);
 t_redirect	*ft_last_redir(t_redirect *lst);
+
 
 
 //////////////////////  Execution  ////////////////////////
@@ -129,7 +129,7 @@ void			hundle_dredir_out(char	 	*file);
 int 			herdoc_exist(t_command *list);
 void 			handle_here_doc(t_command *tmp , char **env);
 // t_here_doc  	*new_node_her(int idx , int i,char *file, int fd, bool expand);
-t_here_doc	*new_node_her(char *file, int fd  , int x);
+t_here_doc	*new_node_her(char *file, int fd  , int x, int is_expand);
 void    		add_back_node_her(t_here_doc **her, t_here_doc *new_her);
 
 
@@ -141,7 +141,7 @@ int 			test_redir_here_doc(t_command *list);
 
 
 /////////////////////////  execut_cmd  //////////////////////////
-int             pipe_exist(t_command *list );	
+int             pipe_exist(t_command *list );
 int  			num_pipe(t_command *list);
 char 			*command_execut(t_command *list);
 int 			**return_pipe(int num_cmd);
@@ -168,6 +168,10 @@ void            ft_echo(t_command *list);
 // void            ft_echo_flag(t_command *list , int k );
 void			ft_exit(t_envarment *var ,t_command *list);
 char 			**array_env(t_envarment *var);
+
+
+char		*ft_strjoin_1(char *s1, char *s2);
+
 
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: rel-mora <rel-mora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 16:05:17 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/09/02 18:10:39 by rel-mora         ###   ########.fr       */
+/*   Updated: 2024/09/04 16:56:10 by rel-mora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,14 @@ void	ft_free_lexer(t_splitor **x)
 	{
 		tmp = *x;
 		*x = (*x)->next;
-		free(tmp->in);
+		if (tmp->in != NULL)
+		{
+			free(tmp->in);
+			tmp->in = NULL;
+		}
+
 		free(tmp);
+		tmp = NULL;
 	}
 }
 
@@ -38,7 +44,7 @@ void	ft_free_split(char **list)
 		j++;
 	}
 	free(list);
-	// list = NULL;
+	list = NULL;
 }
 
 void	ft_free_doc(t_redirect **doc)
@@ -49,39 +55,77 @@ void	ft_free_doc(t_redirect **doc)
 	{
 		tmp = *doc;
 		*doc = (*doc)->next;
-		free(tmp->store);
+		if (tmp->store != NULL)
+		{
+			// free(tmp->store);
+			// tmp->store = NULL;
+		}
 		free(tmp);
+		tmp = NULL;
 	}
 }
 
 void	ft_free_env(t_envarment **my_env)
 {
-	t_envarment	*tmp;
+    t_envarment	*tmp;
 
-	while (*my_env != NULL)
-	{
-		tmp = *my_env;
-		*my_env = (*my_env)->next;
-		free(tmp->data);
-		tmp->data = NULL;
-		free(tmp->var);
-		tmp->var = NULL;
-		free(tmp);
-		tmp = NULL;
-		// printf("===============\n");
-	}
-	*my_env = NULL;
+    while (*my_env) {
+        tmp = *my_env;
+        *my_env = (*my_env)->next;
+        free(tmp->data);
+        free(tmp->var);
+        free(tmp);
+    }
 }
-void	free_command(t_command *cmd)
+void free_command(t_command *cmd)
+{
+    if (cmd)
+    {
+        if (cmd->arg)
+        {
+            for (int i = 0; cmd->arg[i]; i++)
+            {
+                free(cmd->arg[i]);
+            }
+            free(cmd->arg);
+        }
+        free(cmd);
+    }
+}
+// void	free_command(t_command *cmd)
+// {
+// 	if (cmd)
+// 	{
+// 		if (cmd->arg)
+// 		{
+// 			for (int i = 0; cmd->arg[i]; i++)
+// 				free(cmd->arg[i]);
+// 			free(cmd->arg);
+// 		}
+// 		if (cmd->store_her)
+// 		{
+// 			for (int i = 0; cmd->store_her[i]; i++)
+// 				free(cmd->store_her[i]);
+// 			free(cmd->store_her);
+// 		}
+// 		if (cmd->doc)
+// 			ft_free_doc(&cmd->doc);
+// 		free(cmd);
+// 	}
+// }
+
+void	ft_free_command(t_command *cmd)
 {
 	if (cmd)
-	{
-		if (cmd->arg)
-		{
-			for (int i = 0; cmd->arg[i]; i++)
-				free(cmd->arg[i]);
-			free(cmd->arg);
-		}
+    {
+        if (cmd->arg)
+        {
+            for (int i = 0; cmd->arg[i]; i++)
+            {
+                free(cmd->arg[i]);
+            }
+            free(cmd->arg);
+        }
 		if (cmd->store_her)
 		{
 			for (int i = 0; cmd->store_her[i]; i++)
@@ -91,17 +135,5 @@ void	free_command(t_command *cmd)
 		if (cmd->doc)
 			ft_free_doc(&cmd->doc);
 		free(cmd);
-	}
-}
-
-void	ft_free_command(t_command *lst)
-{
-	t_command	*tmp;
-
-	while (lst != NULL)
-	{
-		tmp = lst;
-		lst = lst->next;
-		free_command(tmp);
-	}
+    }
 }
