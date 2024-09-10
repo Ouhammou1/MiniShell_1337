@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 17:55:31 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/09/07 15:00:42 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/10 11:11:50 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ char	**array_env(t_envarment *var)
 					+ ft_strlen(var->data) + 2));
 		tmp = ft_strjoin_1(var->var, "=");
 		env_v[i] = ft_strjoin_1(tmp, var->data);
+		free(tmp);
 		i++;
 		var = var->next;
 	}

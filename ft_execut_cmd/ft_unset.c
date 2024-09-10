@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 19:06:34 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/09/01 23:42:20 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/09 19:37:14 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	ft_unset(t_envarment *var, t_command *list)
 	i = 1;
 	if (ft_strcmp(var->var, list->arg[1]) == 0)
 		env = delet_first_node(env);
-	env_1 = env;
+	env_1 = var;
 	while (list->arg[i])
 	{
 		while (env_1)
@@ -42,7 +42,7 @@ void	ft_unset(t_envarment *var, t_command *list)
 			if (ft_strcmp(env_1->var, list->arg[i]) == 0)
 			{
 				env->next = env_1->next;
-				free(env_1);
+				// free(env_1);
 			}
 			env = env_1;
 			env_1 = env_1->next;

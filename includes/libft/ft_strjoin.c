@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/15 18:48:18 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/09/07 15:14:03 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/08 15:23:01 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,11 @@ char	*ft_strjoin(char *s1, char *s2)
 		s1 = ft_calloc(1, sizeof(char));
 		s1[0] = '\0';
 	}
-	if (!s2 || !s1)
-		return (NULL);
+if (!s2)
+	{
+		s2 = ft_calloc(1, sizeof(char));
+		s2[0] = '\0';
+	}
 	str_final = ft_calloc((ft_strlen(s1) + ft_strlen(s2)) + 1, sizeof(char));
 	if (str_final == NULL)
 		return (NULL);
@@ -36,7 +39,7 @@ char	*ft_strjoin(char *s1, char *s2)
 	while (s2[j])
 		str_final[i++] = s2[j++];
 	str_final[i] = '\0';
-	// free(s1);
-	// s1 = NULL;
+	free(s1);
+	s1 = NULL;
 	return (str_final);
 }

@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/25 14:49:25 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/09/07 15:02:42 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/10 10:29:52 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,8 @@ void		ft_free_command(t_command *cmd);
 // void		ft_putstr_fd(const char *s, int fd);
 // int			ft_strlen(const char *s);
 int			ft_lexer(char *str_input, t_splitor **x);
-
+void	ft_get_word(char *s, t_idx *var, t_splitor **x);
+void	ft_get_char(char *s, t_idx *var, t_splitor **x);
 t_envarment	*ft_stock_envarment(char **env);
 void		print_t_command(t_splitor *cmd);
 void		print_redirect_list(t_redirect *head);
@@ -71,6 +72,7 @@ void		add_back_node(t_envarment **lst, t_envarment *new);
 t_envarment	*ft_stock_envarment(char **env);
 char		*ft_expand(char *arg, t_envarment *my_env);
 // ---------
+void	ft_count_parameters(t_splitor *tmp_x, int *count);
 void		ft_command(t_splitor **x, t_command **cmd, t_envarment *env);
 void		ft_add_command(t_command **lst, t_command *new);
 t_command	*ft_new_command(int count, t_splitor **tmp_x, t_envarment *env);
@@ -78,7 +80,6 @@ t_command	*ft_last_command(t_command *lst);
 // ---------
 void		ft_not_pipe(t_command **new_node, int *i, t_splitor **tmp_x,
 				t_envarment *my_env);
-int			ft_check_command(t_splitor *tmp_x);
 void		ft_skip_spaces(t_splitor **tmp_x);
 void	ft_skip_spaces_in_count(t_splitor **tmp_x);
 
@@ -131,6 +132,7 @@ void 			handle_here_doc(t_command *tmp , char **env);
 // t_here_doc  	*new_node_her(int idx , int i,char *file, int fd, bool expand);
 t_here_doc	*new_node_her(char *file, int fd  , int x, int is_expand);
 void    		add_back_node_her(t_here_doc **her, t_here_doc *new_her);
+int	count_herdoc(t_command *tmp);
 
 
 /////////////////////////  function redirections  //////////////////////////
@@ -168,10 +170,7 @@ void            ft_echo(t_command *list);
 // void            ft_echo_flag(t_command *list , int k );
 void			ft_exit(t_envarment *var ,t_command *list);
 char 			**array_env(t_envarment *var);
-
-
-char		*ft_strjoin_1(char *s1, char *s2);
-
-
+char			*ft_strjoin_1(char *s1, char *s2);
+int				len_var(t_envarment *var);
 
 #endif
