@@ -6,11 +6,43 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/28 20:46:31 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/09/10 13:34:10 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/17 09:29:37 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+void	ft_free_leaks(t_command *list, t_envarment **var)
+{
+	int	i;
+
+	(void)var;
+	i = 0;
+	while (list->ar_env[i])
+	{
+		free(list->ar_env[i]);
+		i++;
+	}
+	free(list->ar_env);
+}
+
+void	parent_proc(int pid)
+{
+	int	status;
+
+	if (waitpid(pid, &status, 0) == -1)
+	{
+		perror("waitpid");
+		g_exit_status = 1;
+	}
+	else
+	{
+		if (WIFEXITED(status))
+			g_exit_status = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+			g_exit_status = 128 + WTERMSIG(status);
+	}
+}
 
 void	hundle_redirections(t_command *list)
 {
@@ -35,92 +67,12 @@ void	hundle_redirections(t_command *list)
 	}
 }
 
-void	built_in(t_envarment *var, t_command *list)
+void	run_command(t_command *list, t_envarment **var)
 {
-	
-	if (list == NULL)
-		return ;
-	
-	if (ft_strcmp(list->content, "exit") == 0)
-		(ft_exit(var, list));
-	if (ft_strcmp(list->content, "cd") == 0)
-		(ft_cd(list));
-	if (ft_strcmp(list->content, "pwd") == 0)
-		(ft_pwd(list));
-	if (ft_strcmp(list->content, "export") == 0)
-	{
-		(ft_export(var, list));
-	}
-	if (ft_strcmp(list->content, "unset") == 0)
-		(ft_unset(var, list));
-	if (ft_strcmp(list->content, "env") == 0)
-		(ft_env(var));
-	if (ft_strcmp(list->content, "echo") == 0)
-		(ft_echo(list));
-	list->ar_env = array_env(var);
-}
-
-void	execution_cmd(t_command *list, char **new)
-{
-	char	*ptr;
-printf("***********************************  %d \n", getpid());
-	if (list == NULL || new == NULL || new[0] == NULL || list->arg == NULL)
-		return ;
-	if (new[0][0] == '/')
-		ptr = new[0];
-	else
-		ptr = path_command(new[0], list->ar_env);
-	if (!ptr)
-	{
-		ft_putstr_fd("command not found\n", 2);
-		g_exit_status = 127;
-		exit(127);
-	}
-	if (access(ptr, X_OK) == -1)
-	{
-		ft_putstr_fd("command not found \n", 2);
-		free(ptr);
-		g_exit_status = 126;
-		exit(126);
-	}
-	if (execve(ptr, new, list->ar_env) == -1)
-	{
-		// perror("execve ");
-		free(ptr);
-		g_exit_status = 127;
-		exit(127);
-	}
-	
-}
-
-
-int	built_in_exist(t_command *list)
-{
-	if (ft_strcmp(list->content, "exit") == 0)
-		return (1);
-	if (ft_strcmp(list->content, "cd") == 0)
-		return (1);
-	if (ft_strcmp(list->content, "pwd") == 0)
-		return (1);
-	if (ft_strcmp(list->content, "export") == 0)
-		return (1);
-	if (ft_strcmp(list->content, "unset") == 0)
-		return (1);
-	if (ft_strcmp(list->content, "env") == 0)
-		return (1);
-	if (ft_strcmp(list->content, "echo") == 0)
-		return (1);
-	return (0);
-}
-
-
-void		run_command(t_command *list ,t_envarment *var ,char **env) 
-{
-	int			heredoc_fd;
-	(void)env;
+	int	heredoc_fd;
 
 	heredoc_fd = -1;
-	if (herdoc_exist(list) == 1 && pipe_exist(list) == 0 )
+	if (herdoc_exist(list) == 1 && pipe_exist(list) == 0)
 	{
 		heredoc_fd = hundle_file_herdoc(list);
 		if (heredoc_fd != -1)
@@ -130,61 +82,30 @@ void		run_command(t_command *list ,t_envarment *var ,char **env)
 		}
 		hundle_redirections(list);
 		execution_cmd(list, list->arg);
-
+		exit(0);
 	}
-	else  if(pipe_exist(list) == 1 )
+	else if (pipe_exist(list) == 1)
 	{
 		handle_pipe(list, var);
+		exit(g_exit_status);
 	}
 	else
 	{
-		if (test_redir_here_doc(list))
-		{
-			hundle_redirections(list);
-			built_in(var, list);
-		}
-		if (built_in_exist(list) == 0)
-			execution_cmd(list, list->arg);
+		run_simple_cmd(list, var);
+		exit(0);
 	}
-	g_exit_status = 126;
-	exit(EXIT_SUCCESS);
 }
 
-	
-void 		ft_free_leaks(t_command  *list , t_envarment *var)
-{
-	int 	i;
-	(void)var;
-	i = 0;
-	while (list->ar_env[i])
-	{
-		free(list->ar_env[i]);
-		i++;
-	}
-	free(list->ar_env);
-	
-}
-void	ft_exute(t_envarment *var, t_command *cmd, char **env)
+void	ft_exute(t_envarment **var, t_command *cmd)
 {
 	t_command	*list;
-	int			status;
 	int			pid;
 
 	list = cmd;
-	if (list == NULL)
-		return ;
+	list->ar_env = NULL;
 	list->ar_env = array_env(var);
-	if (herdoc_exist(list) == 1)
-	{
-		handle_here_doc(list, env);
-	}
-	if (built_in_exist(list) == 1 && pipe_exist(list) == 0 && herdoc_exist(list) == 0 && test_redir_here_doc(list) == 0)
-	{
-		if (test_redir_here_doc(list) == 1)
-			hundle_redirections(list);
-		built_in(var, list);
+	if (run_herdoc_built(var, cmd) == 1)
 		return ;
-	}
 	pid = fork();
 	if (pid < 0)
 	{
@@ -192,15 +113,11 @@ void	ft_exute(t_envarment *var, t_command *cmd, char **env)
 		return ;
 	}
 	else if (pid == 0)
-		run_command(list ,var , env) ;
+		run_command(list, var);
 	else
 	{
-		if (waitpid(pid, &status, 0) == -1)
-		{
-			perror("waitpid");
-			g_exit_status = status;
-			exit(status);
-		}
+		parent_proc(pid);
 	}
-	ft_free_leaks(list , var);
+	delet_files(cmd);
+	ft_free_leaks(list, var);
 }

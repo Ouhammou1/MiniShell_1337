@@ -6,17 +6,18 @@
 /*   By: rel-mora <rel-mora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 08:13:33 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/09/06 12:15:50 by rel-mora         ###   ########.fr       */
+/*   Updated: 2024/09/16 19:12:20 by rel-mora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_go_to_env(char **s, char *arg, int *i, t_envarment *my_env)
+void	ft_go_to_env(char **s, char *arg, int *i, t_envarment **my_env)
 {
 	t_envarment	*tmp_env;
 
-	tmp_env = my_env;
+	*s = NULL;
+	tmp_env = *my_env;
 	while (tmp_env != NULL)
 	{
 		if (ft_search(tmp_env->var, arg + (*i)))
@@ -30,7 +31,7 @@ void	ft_go_to_env(char **s, char *arg, int *i, t_envarment *my_env)
 	}
 }
 
-char	*ft_expand(char *arg, t_envarment *my_env)
+char	*ft_expand(char *arg, t_envarment **my_env)
 {
 	int		i;
 	char	*s;
@@ -40,16 +41,18 @@ char	*ft_expand(char *arg, t_envarment *my_env)
 	while (arg[i])
 	{
 		if (arg[i + 1] == '?')
+		{
 			return (s = ft_strdup(ft_itoa(g_exit_status)), s);
-		else if (!ft_isalnum(arg[2]))
+		}
+		else if (ft_search("$\"\"", arg))
 			return (s = ft_strdup(""), s);
-		else if (arg[1] == '\0')
-			return (s = ft_strdup("$"), s);
 		else if (arg[i] == '$')
 		{
 			i++;
-			if (arg[i] == '\0')
-				break ;
+			 if (arg[i] == '\0')
+				return (s = ft_strdup("$"), s);
+			if (!ft_isalnum(arg[i]))
+				return (s = ft_strdup(""));
 			ft_go_to_env(&s, arg, &i, my_env);
 		}
 		i++;

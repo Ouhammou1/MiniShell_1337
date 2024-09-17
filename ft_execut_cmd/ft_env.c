@@ -6,18 +6,18 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 19:19:49 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/09/07 16:21:22 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/12 14:48:08 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	ft_env(t_envarment *var)
+void	ft_env(t_envarment **var)
 {
 	t_envarment	*ptr;
 
-	ptr = var;
-	while (ptr)
+	ptr = *var;
+	while (ptr != NULL)
 	{
 		if (ptr->data == NULL || ptr->data[0] == '\0')
 		{

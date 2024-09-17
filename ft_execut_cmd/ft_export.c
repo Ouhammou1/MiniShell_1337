@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_export.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rel-mora <rel-mora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 19:19:52 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/09/07 16:17:11 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/12 11:36:45 by rel-mora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,11 @@ int	ft_isalnum_exp(int c)
 			&& c <= 'z') || (c == '_') || c == '<' || c == '>');
 }
 
-int	test_exist(t_envarment *var, char **list)
+int	test_exist(t_envarment **var, char **list)
 {
 	t_envarment	*ptr;
 
-	ptr = var;
+	ptr = *var;
 	while (ptr)
 	{
 		if (ft_strcmp(ptr->var, list[0]) == 0)
@@ -117,12 +117,15 @@ void	print_export(t_envarment **var)
 {
 	t_envarment	*ptr;
 
+	if (*var == NULL || var == NULL)
+		return ;
 	ptr = *var;
 	while (ptr != NULL)
 	{
-		if (ptr->data[0] == '\0')
+		if (ptr->data != NULL && ptr->data[0] == '\0')
 			printf("Declare -x %s\n", (char *)ptr->var);
-		else if (ptr->data[0] == '=' && ptr->data[1] == '\0')
+		else if (ptr->data != NULL && ptr->data[0] == '='
+			&& ptr->data[1] == '\0')
 			printf("Declare -x %s=\"\"\n", (char *)ptr->var);
 		else
 			printf("Declare -x %s=\"%s\"\n", (char *)ptr->var,
@@ -147,7 +150,7 @@ void	check_dolar_is(char *str, t_envarment *var, t_command *s)
 		{
 			if (!ft_isalnum_exp(str[i]))
 			{
-				printf("export: `%s': not a valid identifier\n", str);
+				ft_putstr_fd("not a valid identifier\n", 2);
 				return ;
 			}
 			i++;
@@ -160,6 +163,8 @@ void	check_dolar_is(char *str, t_envarment *var, t_command *s)
 
 int	exist_redir(char *ptr)
 {
+	if (!ptr)
+		return (0);
 	if (ft_strcmp(ptr, ">") == 0)
 		return (1);
 	if (ft_strcmp(ptr, ">>") == 0)
@@ -168,49 +173,71 @@ int	exist_redir(char *ptr)
 		return (1);
 	return (0);
 }
-
-int	var_is_valid(char *ptr)
+void	affiche_export(char **str, t_envarment **var)
 {
-	int		j;
-	char	**list;
+	int		i;
+	int		count;
+	char	*ptr;
 
-	if (ptr[0] == '=')
+	count = 0;
+	i = 0;
+	while (str[i] != NULL)
 	{
-		printf("export: `%s': not a valid identifier\n", ptr);
-		return (0);
-	}
-	if (ft_isdigit(ptr[0]))
-	{
-		printf("export: `%s': not a valid identifier\n", ptr);
-		return (0);
-	}
-	list = ft_split(ptr, '=');
-	if (list[0][0] == '\0' && list[1][0] != '\0')
-	{
-		printf("export: `%s': not a valid identifier\n", ptr);
-		return (0);
-	}
-	j = 0;
-	while (list[0][j])
-	{
-		if (!ft_isalnum_exp(list[0][j]))
+		if (str[i][0] != '\0')
 		{
-			printf("export: `%s': not a valid identifier\n", ptr);
-			return (0);
+			ptr = str[i];
+			count++;
 		}
-		j++;
+		i++;
 	}
-	j = 0;
-	while (list[j])
+	if (count == 1)
 	{
-		free(list[j]);
-		j++;
+		if (ft_strcmp(ptr, "export") == 0)
+			print_export(var);
 	}
-	free(list);
+}
+int	ft_is_num(char *str)
+{
+	int	i;
+	i = 0;
+	while (str[i])
+	{
+		if (ft_isdigit(str[i]))
+			i++;
+		else
+			return (0);
+	}
 	return (1);
 }
+int	check_is_valid_1(char *str)
+{
+	int	i;
 
-void	ft_export(t_envarment *var, t_command *str)
+	i = 0;
+	if (str[i] == '=')
+	{
+		ft_error(str, "export :`");
+		return (1);
+	}
+	if (ft_isdigit(str[0]))
+	{
+		ft_error(str, "export :`");
+		return (1);
+	}
+	while (str[i] && str[i] != '=')
+	{
+		if (str[i] < '0' || (str[i] >= ':' && str[i] <= '@') || (str[i] >= '['
+				&& str[i] <= '^') || str[i] >= '{' || str[i] == '`')
+		{
+			ft_error(str, "export :`");
+			return (1);
+		}
+		i++;
+	}
+	return (0);
+}
+
+void	ft_export(t_envarment **var, t_command *str)
 {
 	char		**list;
 	int			i;
@@ -219,36 +246,22 @@ void	ft_export(t_envarment *var, t_command *str)
 	i = 1;
 	while (str->arg[i] != NULL)
 	{
-		if (str->arg[i][0] == '$' && str->arg[i + 1] == NULL)
-		{
-			check_dolar_is(str->arg[i], var, str);
-			return ;
-		}
-		if (exist_redir(str->arg[i]) == 1)
-		{
-			if (str->arg[i + 2] == NULL)
-				break ;
-			i = i + 2;
-		}
+		if (str->arg[i][0] == '\0')
+			i++;
 		else
 		{
-			if (var_is_valid(str->arg[i]) == 0)
-			{
-				if (str->arg[i + 1] == NULL)
-					return ;
-			}
+			if (check_is_valid_1(str->arg[i]) == 1)
+				return ;
 			list = split_line(str->arg[i]);
 			if (test_exist(var, list) == 0)
 				i++;
 			else if (test_exist(var, list) == 1)
 			{
 				elem = new_node(list[0], list[1]);
-				add_back_node(&var, elem);
+				add_back_node(var, elem);
 				i++;
 			}
 		}
 	}
-	if (str->arg[1] == NULL || str->arg[1][0] == '\0'
-		|| (exist_redir(str->arg[1]) == 1))
-		print_export(&var);
+	affiche_export(str->arg, var);
 }
