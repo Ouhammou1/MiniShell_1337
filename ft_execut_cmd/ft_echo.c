@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/10 09:06:30 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/09/13 17:59:31 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/18 15:14:05 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,25 +16,23 @@ static void	complet_function(t_command *list, int k, bool flag)
 {
 	while (list->arg[k])
 	{
-		ft_putstr_fd(list->arg[k] , 1);
+		ft_putstr_fd(list->arg[k], 1);
 		if (list->arg[k + 1] != NULL)
 			ft_putstr_fd(" ", 1);
 		k++;
 	}
 	if (!flag || k == 1)
-		ft_putstr_fd("\n" ,1);
+		ft_putstr_fd("\n", 1);
 }
 
-void	ft_echo(t_command *list )
+void	ft_echo(t_command *list)
 {
 	int		k;
 	bool	flag;
-	bool	flag_dolar;
 	int		i;
 
 	k = 1;
 	flag = false;
-	flag_dolar = false;
 	while (list->arg[k])
 	{
 		if (list->arg[k][0] == '-' && list->arg[k][1] != '\0')

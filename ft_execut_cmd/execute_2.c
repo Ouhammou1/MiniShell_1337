@@ -6,12 +6,11 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 12:22:56 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/09/16 21:27:08 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/24 15:17:44 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
 
 int	built_in_exist(t_command *list)
 {
@@ -33,14 +32,15 @@ int	built_in_exist(t_command *list)
 		return (1);
 	return (0);
 }
-void	built_in(t_envarment **var, t_command *list)
+
+void	built_in(t_environment **var, t_command *list)
 {
 	if (list == NULL)
 		return ;
 	if (ft_strcmp(list->content, "exit") == 0)
 		(ft_exit(var, list));
 	if (ft_strcmp(list->content, "cd") == 0)
-		(ft_cd(var,list, list->ar_env));
+		(ft_cd(var, list, list->ar_env));
 	if (ft_strcmp(list->content, "pwd") == 0)
 		(ft_pwd(list));
 	if (ft_strcmp(list->content, "export") == 0)
@@ -57,8 +57,6 @@ void	built_in(t_envarment **var, t_command *list)
 	}
 }
 
-
-
 void	execution_cmd(t_command *list, char **new)
 {
 	char	*ptr;
@@ -69,7 +67,6 @@ void	execution_cmd(t_command *list, char **new)
 		ptr = new[0];
 	else
 		ptr = path_command(new[0], list->ar_env);
-	// printf("..................     %s\n", ptr);
 	if (!ptr)
 	{
 		ft_putstr_fd("command not found\n", 2);
@@ -85,9 +82,7 @@ void	execution_cmd(t_command *list, char **new)
 	}
 }
 
-
-
-void	run_simple_cmd(t_command *list, t_envarment **var)
+void	run_simple_cmd(t_command *list, t_environment **var)
 {
 	if (test_redir_here_doc(list) == 1)
 	{
@@ -101,29 +96,69 @@ void	run_simple_cmd(t_command *list, t_envarment **var)
 }
 
 
+int 	file_not_valid(t_command  *list )
+{
+	t_command *tmp;
+	
+	if(list == NULL)
+		return 0;
+	tmp = list;
+	while (tmp->doc)
+	{	
+		if (tmp->doc->type == DREDIR_OUT)
+		{
+			if (open(tmp->doc->store, O_WRONLY | O_CREAT | O_APPEND, 0644) < 0)
+				return 1;
+		}
+		if (tmp->doc->type == REDIR_OUT)
+		{
+			if(open(tmp->doc->store, O_WRONLY | O_CREAT | O_TRUNC, 0644) < 0)
+				return 1;
+		}
+		if (tmp->doc->type == REDIR_IN)
+		{
+			if(open( tmp->doc->store , O_RDONLY , 0644) < 0)
+				return 1;
+		}
+		tmp->doc = tmp->doc->next;
+	}
 
+	return 0;
+}
 
-
-int	run_herdoc_built(t_envarment **var, t_command *cmd)
+int	run_herdoc_built(t_environment **var, t_command *cmd)
 {
 	t_command	*list;
 
 	list = cmd;
 	if (list == NULL)
-		return (-1);
+		return (0);
 	if (herdoc_exist(list) == 1)
 	{
-		handle_here_doc(var, list);
-		if (built_in_exist(list) == 1 && pipe_exist(list) == 0)
+		if (handle_here_doc(var, list) == true)
+			return (-1);
+		if (built_in_exist(list) == 1 && pipe_exist(list) == 0 && test_redir_here_doc(list) == 0)
+		{
 			built_in(var, list);
+			return (1);
+		}
 	}
 	if (built_in_exist(list) == 1 && pipe_exist(list) == 0
 		&& herdoc_exist(list) == 0 && test_redir_here_doc(list) == 0)
 	{
-		if (test_redir_here_doc(list) == 1)
-			hundle_redirections(list);
 		built_in(var, list);
 		return (1);
+	}
+	else if (built_in_exist(list) == 1 && pipe_exist(list) == 0
+		 && ft_check_built(list) == 1)
+	{
+			if(test_redir_here_doc(list) == 1 )
+				if( file_not_valid(list ) == 1)
+					return 0;
+			if(list->arg[1] != NULL)
+				built_in(var, list);
+			if (ft_strcmp("cd", list->content) == 0 && list->arg[1] == NULL)
+				built_in(var, list);
 	}
 	return (0);
 }

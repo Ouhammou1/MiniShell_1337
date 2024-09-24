@@ -6,15 +6,15 @@
 /*   By: rel-mora <rel-mora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/29 08:13:33 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/09/16 19:12:20 by rel-mora         ###   ########.fr       */
+/*   Updated: 2024/09/24 18:41:30 by rel-mora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ft_go_to_env(char **s, char *arg, int *i, t_envarment **my_env)
+void	ft_go_to_env(char **s, char *arg, int *i, t_environment **my_env)
 {
-	t_envarment	*tmp_env;
+	t_environment	*tmp_env;
 
 	*s = NULL;
 	tmp_env = *my_env;
@@ -31,28 +31,34 @@ void	ft_go_to_env(char **s, char *arg, int *i, t_envarment **my_env)
 	}
 }
 
-char	*ft_expand(char *arg, t_envarment **my_env)
+char	*ft_expand(char *arg, t_environment **my_env)
 {
 	int		i;
 	char	*s;
+	char	*num;
 
 	i = 0;
 	s = NULL;
+	if (my_env == NULL)
+		return NULL;
 	while (arg[i])
 	{
 		if (arg[i + 1] == '?')
 		{
-			return (s = ft_strdup(ft_itoa(g_exit_status)), s);
+			num = ft_itoa(g_exit_status);
+			return (s = ft_strdup(num), free(num), s);
 		}
 		else if (ft_search("$\"\"", arg))
 			return (s = ft_strdup(""), s);
 		else if (arg[i] == '$')
 		{
 			i++;
-			 if (arg[i] == '\0')
+			if (arg[i] == '\0')
 				return (s = ft_strdup("$"), s);
-			if (!ft_isalnum(arg[i]))
-				return (s = ft_strdup(""));
+			if (arg[i] == '\"' || arg[i] == '\'')
+				return (s = ft_strdup("$"), s);
+			if (!ft_isalnum(arg[i]) || ft_isdigit(arg[i]))
+				return (s);
 			ft_go_to_env(&s, arg, &i, my_env);
 		}
 		i++;
@@ -60,11 +66,11 @@ char	*ft_expand(char *arg, t_envarment **my_env)
 	return (s);
 }
 
-t_envarment	*new_node(void *var, void *data)
+t_environment	*new_node(void *var, void *data)
 {
-	t_envarment	*elem;
+	t_environment	*elem;
 
-	elem = (t_envarment *)malloc(sizeof(t_envarment));
+	elem = (t_environment *)malloc(sizeof(t_environment));
 	if (!elem)
 		return (NULL);
 	elem->var = var;
@@ -73,9 +79,9 @@ t_envarment	*new_node(void *var, void *data)
 	return (elem);
 }
 
-void	add_back_node(t_envarment **lst, t_envarment *new)
+void	add_back_node(t_environment **lst, t_environment *new)
 {
-	t_envarment	*p;
+	t_environment	*p;
 
 	if (!lst || !new)
 		return ;
@@ -92,11 +98,11 @@ void	add_back_node(t_envarment **lst, t_envarment *new)
 	p->next = new;
 }
 
-t_envarment	*ft_stock_envarment(char **env)
+t_environment	*ft_stock_envarment(char **env)
 {
-	t_envarment	*var;
-	int			i;
-	int			j;
+	t_environment	*var;
+	int				i;
+	int				j;
 
 	var = NULL;
 	i = 0;

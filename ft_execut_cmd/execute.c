@@ -6,25 +6,11 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/28 20:46:31 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/09/17 09:29:37 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/24 18:54:34 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-void	ft_free_leaks(t_command *list, t_envarment **var)
-{
-	int	i;
-
-	(void)var;
-	i = 0;
-	while (list->ar_env[i])
-	{
-		free(list->ar_env[i]);
-		i++;
-	}
-	free(list->ar_env);
-}
 
 void	parent_proc(int pid)
 {
@@ -53,26 +39,26 @@ void	hundle_redirections(t_command *list)
 	{
 		if (tmp->type == REDIR_OUT)
 		{
-			hundle_redir_out(tmp->store);
+			hundle_redir_out(tmp->store, tmp->is_amb);
 		}
 		else if (tmp->type == REDIR_IN)
 		{
-			hundle_redir_in(tmp->store);
+			hundle_redir_in(tmp->store, tmp->is_amb);
 		}
 		else if (tmp->type == DREDIR_OUT)
 		{
-			hundle_dredir_out(tmp->store);
+			hundle_dredir_out(tmp->store, tmp->is_amb);
 		}
 		tmp = tmp->next;
 	}
 }
 
-void	run_command(t_command *list, t_envarment **var)
+void	run_command(t_command *list, t_environment **var)
 {
 	int	heredoc_fd;
 
 	heredoc_fd = -1;
-	if (herdoc_exist(list) == 1 && pipe_exist(list) == 0)
+	if (herdoc_exist(list) == 1 && pipe_exist(list) == 0 && test_redir_here_doc(list) == 0)
 	{
 		heredoc_fd = hundle_file_herdoc(list);
 		if (heredoc_fd != -1)
@@ -82,7 +68,7 @@ void	run_command(t_command *list, t_envarment **var)
 		}
 		hundle_redirections(list);
 		execution_cmd(list, list->arg);
-		exit(0);
+		exit(g_exit_status);
 	}
 	else if (pipe_exist(list) == 1)
 	{
@@ -92,32 +78,63 @@ void	run_command(t_command *list, t_envarment **var)
 	else
 	{
 		run_simple_cmd(list, var);
-		exit(0);
+		exit(g_exit_status);
 	}
 }
 
-void	ft_exute(t_envarment **var, t_command *cmd)
+bool	execut_her_built(t_environment **var, t_command *cmd)
+{
+	t_command	*list;
+	int			her;
+
+	list = cmd;
+	list->ar_env = NULL;
+	list->ar_env = array_env(var);
+	her = run_herdoc_built(var, cmd);
+	if (her == -1)
+	{
+		delet_files(cmd);
+		g_exit_status = 1;
+		return (true);
+	}
+	if (her == 1)
+	{
+		delet_files(cmd);
+		return (true);
+	}
+	return (false);
+}
+
+void	ft_exute(t_environment **var, t_command *cmd)
 {
 	t_command	*list;
 	int			pid;
 
 	list = cmd;
-	list->ar_env = NULL;
-	list->ar_env = array_env(var);
-	if (run_herdoc_built(var, cmd) == 1)
-		return ;
-	pid = fork();
-	if (pid < 0)
+
+	if (execut_her_built(var, list) == true)
 	{
-		perror("fork");
 		return ;
 	}
-	else if (pid == 0)
+	pid = fork();
+	if (chech_fork(pid) == 1)
+		return ;
+	signal(SIGINT, SIG_IGN);
+	if (pid == 0)
+	{
+		signal(SIGQUIT, handl_sig_exec);
+		signal(SIGINT, SIG_DFL);
 		run_command(list, var);
+	}
 	else
 	{
 		parent_proc(pid);
+		signal(SIGINT, hhandle_sig);
 	}
 	delet_files(cmd);
-	ft_free_leaks(list, var);
 }
+
+
+
+
+

@@ -6,20 +6,19 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/30 17:55:31 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/09/15 10:00:11 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/24 20:26:28 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int	len_var(t_envarment *var)
+int	len_var(t_environment *var)
 {
-	t_envarment	*tmp;
+	t_environment	*tmp;
 	int			size;
 
-	if(var == NULL)
-		return 0;
-
+	if (var == NULL)
+		return (0);
 	tmp = var;
 	size = 0;
 	while (tmp != NULL)
@@ -30,31 +29,70 @@ int	len_var(t_envarment *var)
 	return (size);
 }
 
-char	**array_env(t_envarment **var)
+char	**array_env(t_environment **var)
 {
-	char	**env_v;
-	int		len;
-	int		i;
-	char	*tmp;
-	t_envarment *tmp_cmd;
+	t_envar		arry;
+	int			i;
+	t_environment	*tmp_cmd;
 
 	tmp_cmd = *var;
-
-	len = len_var(*var);
-	env_v = (char **)malloc(sizeof(char *) * (len + 1));
-	if (env_v == NULL)
+	arry.len = len_var(*var);
+	arry.env_v = (char **)malloc(sizeof(char *) * (arry.len + 1));
+	if (arry.env_v == NULL)
 		return (NULL);
 	i = 0;
-	while (i < len)
+	while (i < arry.len)
 	{
-		env_v[i] = (char *)malloc(sizeof(char) * (ft_strlen(tmp_cmd->var)
-					+ ft_strlen(tmp_cmd->data) + 2));
-		tmp = ft_strjoin_1(tmp_cmd->var, "=");
-		env_v[i] = ft_strjoin_1(tmp, tmp_cmd->data);
-		free(tmp);
+		arry.var_1 = ft_strdup(tmp_cmd->var);
+		arry.var_2 = ft_strdup(tmp_cmd->data);
+		arry.res = ft_strjoin(arry.var_1, "=");
+		arry.env_v[i] = ft_strjoin(arry.res, arry.var_2);
+		free(arry.var_2);
 		i++;
 		tmp_cmd = tmp_cmd->next;
 	}
-	env_v[i] = NULL;
-	return (env_v);
+	arry.env_v[i] = NULL;
+	return (arry.env_v);
 }
+
+char	*ft_join(char *s1, char *s2)
+{
+	size_t	i;
+	size_t	j;
+	char	*ptr;
+
+	if (s1 == NULL || s2 == NULL)
+		return (0);
+	ptr = (char *)malloc((ft_strlen(s1) + ft_strlen(s2) + 1) * sizeof(char));
+	if (ptr == NULL)
+		return (NULL);
+	i = 0;
+	while (i < ft_strlen(s1))
+	{
+		ptr[i] = s1[i];
+		i++;
+	}
+	j = 0;
+	while (j < ft_strlen(s2))
+	{
+		ptr[i] = s2[j];
+		j++;
+		i++;
+	}
+	ptr[i] = '\0';
+	return (ptr);
+}
+int	ft_check_built(t_command *list)
+{
+	 t_command *tmp;
+	 
+	tmp = list;
+	if( ft_strcmp(tmp->content, "export") == 0 && tmp->arg[1] != NULL )
+		return 1;
+	if( ft_strcmp(tmp->content, "unset") == 0 && tmp->arg[1] != NULL )
+		return 1;
+	if( ft_strcmp(tmp->content, "cd") == 0)
+		return 1;
+	return 0;	
+}
+

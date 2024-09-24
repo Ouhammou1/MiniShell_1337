@@ -6,11 +6,9 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 12:39:52 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/09/16 12:39:54 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/24 21:33:09 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-
 
 #include "../minishell.h"
 
@@ -19,6 +17,7 @@ void	close_free_wait(int *pids, int **pipefd, int num_cmd)
 	int	j;
 	int	status;
 
+	status = -1;
 	close(pipefd[num_cmd - 1][0]);
 	close(pipefd[num_cmd - 1][1]);
 	j = 0;
@@ -39,8 +38,9 @@ void	close_free_wait(int *pids, int **pipefd, int num_cmd)
 		}
 		j++;
 	}
-	free_pid_pipe(pids , pipefd , num_cmd);
+	free_pid_pipe(pids, pipefd, num_cmd);
 }
+
 void	ft_write_in_pipe(t_pipe *hd_p, int i)
 {
 	if (i > 0)
@@ -56,8 +56,10 @@ void	ft_write_in_pipe(t_pipe *hd_p, int i)
 		close(hd_p->pipefd[i][1]);
 	}
 }
-void	ft_func_2(t_pipe *hd_p, int i, t_envarment **var)
+
+void	ft_func_2(t_pipe *hd_p, int i, t_environment **var)
 {
+
 	if (hd_p->pids[i] == 0)
 	{
 		ft_write_in_pipe(hd_p, i);
@@ -80,7 +82,8 @@ void	ft_func_2(t_pipe *hd_p, int i, t_envarment **var)
 			exit(1);
 	}
 }
-void	ft_func(t_pipe *hd_p, int i, t_envarment **var)
+
+void	ft_func(t_pipe *hd_p, int i, t_environment **var)
 {
 	if (hd_p->tmp_cmd->is_pipe == 1)
 		hd_p->tmp_cmd = hd_p->tmp_cmd->next;
@@ -105,12 +108,12 @@ void	ft_func(t_pipe *hd_p, int i, t_envarment **var)
 	}
 	hd_p->tmp_cmd = hd_p->tmp_cmd->next;
 }
-void	handle_pipe(t_command *list, t_envarment **var)
+
+void	handle_pipe(t_command *list, t_environment **var)
 {
 	t_pipe	hd_p;
 	int		i;
 
-	// hd_p = NULL;
 	hd_p.num_cmd = num_pipe(list) + 1;
 	hd_p.pipefd = return_pipe(hd_p.num_cmd);
 	hd_p.tmp_cmd = list;
@@ -125,6 +128,7 @@ void	handle_pipe(t_command *list, t_envarment **var)
 	}
 	while (i < hd_p.num_cmd)
 	{
+		signal(SIGINT, sig_herdoc);
 		ft_func(&hd_p, i, var);
 		i++;
 	}

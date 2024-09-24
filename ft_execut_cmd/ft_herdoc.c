@@ -6,327 +6,128 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/19 20:55:15 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/09/17 09:33:03 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/24 15:15:39 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int	herdoc_exist(t_command *list)
+void	hundle_chil_pro(t_here_doc *tmp_her, t_environment **var)
 {
-	t_command	*tmp;
-	int 		count;
+	char	*line;
 
-	if (list == NULL)
-		return (0);
-	count =0;
-	tmp = list;
-	count = count_herdoc(tmp);
-	if( count != 0)
-		return 1;
-	else
-		return 0;
-}
-
-
-char *ft_handle_var(char *line, int *i, t_envarment *my_env, char *final)
-{
-    int len = 0;
-    int j;
-    char *s;
-
-    (*i)++;
-    j = *i;
-    while (line[*i] && ft_isalnum(line[*i]))
-    {
-        (*i)++;
-        len++;
-    }
-	(*i)--;
-	j--;
-	len++;
-    s = ft_expand(ft_substr(line, j, len), &my_env);
-    final = ft_strjoin(final, s);
-    free(s);
-    return final;
-}
-
-
-char *ft_expand_in_her(char *line, t_envarment *my_env)
-{
-    int i = 0;
-    int j;
-    int len;
-    char *final = NULL;
-
-    while (line[i])
-    {
-        len = 0;
-        if (line[i] == '$')
-            final = ft_handle_var(line, &i, my_env, final);
-        else
-        {
-            j = i;
-            while (line[i] && line[i] != '$')
-            {
-                i++;
-                len++;
-            }
-            final = ft_strjoin_1(final, ft_substr(line, j, len));
-			i--;
-        }
-		i++;
-    }
-    return final;
-}
-
-
-// char	*ft_expand_in_her(char *line, t_envarment *my_env)
-// {
-// 	int i = 0;
-// 	int len = 0;
-// 	int j = 0;
-// 	char *s;
-// 	char *final;
-
-// 	final = NULL;
-// 	while (line[i])
-// 	{
-// 		len = 0;
-// 		if (line[i] == '$')
-// 		{
-// 			i++;
-// 			j = i;
-// 			while (line[i] && ft_isalnum(line[i]))
-// 			{
-// 				i++;
-// 				len++;
-// 			}
-// 			i--;
-// 			j--;
-// 			len++;
-// 			s = ft_expand(ft_substr(line, j, len), &my_env);
-// 			final = ft_strjoin(final, s);
-// 			free(s);
-// 		}
-// 		else
-// 		{
-// 			j = i;
-// 			while (line[i] && line[i] != '$')
-// 			{
-// 				i++;
-// 				len++;
-// 			}
-// 			final = ft_strjoin_1(final, ft_substr(line, j, len));
-// 			i--;
-// 		}
-// 		i++;
-
-// 	}
-// 	return (final);
-// }
-
-
-
-
-void	write_in_file(t_here_doc *tmp, char *line, t_envarment **var)
-{
-	char		*tmp_line;
-	char		*path_file;
-	char 		*final;
-	t_envarment *my_env;
-
-	my_env  = *var;
-	final = NULL;
-	tmp_line = ft_strjoin_1(tmp->store, ft_itoa(tmp->idx));
-	path_file = ft_strjoin_1("/tmp/herdoc", tmp_line);
-	free(tmp_line);
-	tmp->fd = open(path_file, O_CREAT | O_WRONLY | O_APPEND, 0600);
-	if (tmp->fd < 0)
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_IGN);
+	while (1)
 	{
-		perror("open");
-		return ;
-	}
-	if (tmp->expad == 1)
-	{
-		final = ft_expand_in_her(line, my_env);
-		ft_putstr_fd(final, tmp->fd);
-	}
-	else
-		ft_putstr_fd(line, tmp->fd);
-	free(line);
-	write(tmp->fd, "\n", 1);
-	close(tmp->fd);
-}
-
-int	count_herdoc(t_command *tmp)
-{
-	int			count;
-	t_command	*cmd;
-	t_here_doc	*her ;
-
-	cmd = tmp;
-	count = 0;
-	if (tmp == NULL )
-		return (0);
-	while (cmd != NULL)
-	{
-		her = cmd->her;
-		if (her != NULL)
-		{
-			while (her != NULL)
-			{
-				if (her->store != NULL)
-					count++;
-				her = her->next;
-			}
-			cmd = cmd->next;
-		}
+		line = readline("> ");
+		if (line == NULL)
+			exit(EXIT_SUCCESS);
+		if (ft_strcmp(line, tmp_her->store) == 0)
+			exit(EXIT_SUCCESS);
 		else
-			cmd = cmd->next;
+			write_in_file(tmp_her, line, var);
 	}
-	return (count);
 }
 
-void	sig_herdoc(int sig)
+int	handle_fork(t_here_doc *tmp_her, t_environment **var)
 {
-	(void)sig;
-	// printf("\n");
-	// sleep(1);
-	exit(1);
-}
+	int	pid;
+	int	status;
 
-
-int   ft_cmp_delimeter(t_command *tmp_cmd, int *i, t_envarment **var)
-{
-    t_here_doc *tmp_her;
-    char *line;
-    int pid;
-    int status = -1;
-	(void)i;
-	void (*old_sigint_handler)(int);
-
-    tmp_her = tmp_cmd->her;
-    while (tmp_cmd != NULL && tmp_her != NULL)
+	status = -1;
+	signal(SIGINT, SIG_IGN);
+	pid = fork();
+	if (pid == -1)
 	{
-
-		old_sigint_handler = signal(SIGINT, SIG_IGN);
-		pid = fork();
-		if (pid == -1)
-		{
-			perror("fork");
-			signal(SIGINT,old_sigint_handler);
-			return 0;
-		}
-		if (pid == 0)
-		{
-			signal(SIGINT , sig_herdoc);
-			signal(SIGQUIT , SIG_IGN);
-			while (1)
-			{
-				line = readline("> ");
-				if (line == NULL )
-					exit(EXIT_SUCCESS);
-
-				if (ft_strcmp(line, tmp_her->store) == 0)
-					exit(EXIT_SUCCESS);
-				else
-					write_in_file(tmp_her, line, var);
-			}
-		}
-		else
-		{
-			waitpid(pid, &status, 0);
-			if (WIFEXITED(status) && WEXITSTATUS(status) == 0)
-				g_exit_status = status;
-			if (status == 256)
-				return status;
-			tmp_her = tmp_her->next;
-		}
-    }
-	return status;
+		perror("fork");
+		g_exit_status = 1;
+		return (0);
+	}
+	if (pid == 0)
+		hundle_chil_pro(tmp_her, var);
+	else
+	{
+		waitpid(pid, &status, 0);
+		if (WIFEXITED(status) && WEXITSTATUS(status) == 0)
+			g_exit_status = status;
+		else if (WIFSIGNALED(status))
+			g_exit_status = 128 + WTERMSIG(status);
+	}
+	signal(SIGINT, hhandle_sig);
+	return (status);
 }
 
+int	ft_cmp_delimeter(t_command *tmp_cmd, t_environment **var)
+{
+	t_here_doc	*tmp_her;
+	int			status;
 
-void 	create_files(t_command *cmd)
+	status = -1;
+	tmp_her = tmp_cmd->her;
+	while (tmp_cmd != NULL && tmp_her != NULL)
+	{
+		status = handle_fork(tmp_her, var);
+		if (WTERMSIG(status) == SIGINT)
+		{
+			return (status);
+		}
+		tmp_her = tmp_her->next;
+	}
+	return (status);
+}
+
+void	create_files(t_command *cmd, char *itoa)
 {
 	t_command	*tmp;
 	t_here_doc	*tmp_her;
 	char		*tmp_line;
 	char		*path_file;
 
-	if(cmd == NULL)
+	if (cmd == NULL)
 		return ;
-
 	tmp = cmd;
 	while (tmp != NULL)
 	{
 		tmp_her = tmp->her;
 		while (tmp != NULL && tmp_her != NULL)
 		{
-			tmp_line = ft_strjoin_1(tmp_her->store , ft_itoa(tmp_her->idx));
+			itoa = ft_itoa(tmp_her->idx);
+			tmp_line = ft_strjoin_1(tmp_her->store, itoa);
+			free(itoa);
 			path_file = ft_strjoin_1("/tmp/herdoc", tmp_line);
-			// free(tmp_her);
+			free(tmp_line);
 			tmp_her->fd = open(path_file, O_CREAT | O_WRONLY | O_APPEND, 0600);
+			free(path_file);
 			close(tmp_her->fd);
-			// free(path_file);
 			tmp_her = tmp_her->next;
 		}
 		tmp = tmp->next;
 	}
 }
-void 	exit_herdoc(int sig)
-{
-	(void)sig;
-	printf("\n");
-	exit(1);
-}
 
-void 	delet_files(t_command *cmd)
-{
-	t_command *tmp;
-	t_here_doc *her;
-	char *ptr;
-	char *file;
-	
-	tmp = cmd;
-	while (tmp != NULL)
-	{
-		her = tmp->her;
-		while (her != NULL)
-		{
-			
-			ptr = ft_strjoin_1(her->store ,ft_itoa(her->idx) );
-			file = ft_strjoin_1( "/tmp/herdoc" ,ptr);
-			if(unlink(file) != 0)
-			{
-				g_exit_status = 1;
-				perror("");
-			}
-			her = her->next;
-		}
-		tmp = tmp->next;
-	}
-}
-void 	handle_here_doc(t_envarment **var ,t_command *cmd )
+bool	handle_here_doc(t_environment **var, t_command *cmd)
 {
 	t_command	*tmp_cmd;
-	int			count;
-	int			i;
-	int status;
-	tmp_cmd = cmd;
+	int			status;
+	char		*itoa;
+	bool		flag;
 
+	itoa = NULL;
+	flag = false;
+	tmp_cmd = cmd;
 	if (cmd == NULL || tmp_cmd == NULL)
-		return ;
-	count = count_herdoc(tmp_cmd);
-	create_files(tmp_cmd);
-	i = 0;
+		return (-1);
+	create_files(tmp_cmd, itoa);
 	while (tmp_cmd != NULL)
 	{
-		status = ft_cmp_delimeter(tmp_cmd, &i, var);
-		if (status == 256 )
-			break;
+		status = ft_cmp_delimeter(tmp_cmd, var);
+		if (WTERMSIG(status) == SIGINT)
+		{
+			flag = true;
+			break ;
+		}
 		tmp_cmd = tmp_cmd->next;
 	}
+	return (flag);
 }
-

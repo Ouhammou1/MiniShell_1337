@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/13 16:33:49 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/09/12 17:49:51 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/24 19:07:42 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,45 +15,41 @@
 int	hundle_file_herdoc(t_command *list)
 {
 	int			fd;
-	char		*file;
 	char		*file_name;
 	t_command	*tmp;
-	char	 *itoa;
 
 	tmp = list;
 	if (tmp->her == NULL)
 		return (0);
 	while (tmp->her->next)
 		tmp->her = tmp->her->next;
-	itoa = ft_itoa(tmp->her->idx);
-	file = ft_strjoin_1(tmp->her->store, itoa);
-	free(itoa);
-	file_name = ft_strjoin_1("/tmp/herdoc", file);
-	free(file);
+	file_name = ft_name_file(tmp->her);
 	fd = open(file_name, O_RDONLY, 0644);
 	if (fd < 0)
 	{
 		perror("open");
-		g_exit_status = 0;
 		exit(EXIT_FAILURE);
 	}
 	if (dup2(fd, STDIN_FILENO) < 0)
 	{
 		perror("dup2");
-		g_exit_status = 0;
 		exit(EXIT_FAILURE);
 	}
-
-	close(fd);
 	free(file_name);
+	close(fd);
 	return (fd);
 }
 
-void	hundle_redir_out(char *file)
+void	hundle_redir_out(char *file, int amb)
 {
 	int	fd;
-
-	if (file == NULL)
+	if (file == NULL || file[0]== '\0')
+	{
+		perror("open");
+		g_exit_status = 1;
+		exit(EXIT_FAILURE);
+	}
+	if (amb == 1)
 	{
 		ft_putstr_fd("ambiguous redirect\n", 2);
 		g_exit_status = 1;
@@ -69,22 +65,28 @@ void	hundle_redir_out(char *file)
 	if (dup2(fd, STDOUT_FILENO) < 0)
 	{
 		perror("dup2");
+		g_exit_status = 1;
 		exit(EXIT_FAILURE);
 	}
 	close(fd);
 }
 
-void	hundle_redir_in(char *file)
+void	hundle_redir_in(char *file, int amb)
 {
 	int	fd;
-
-	if (file == NULL)
+	if (file == NULL || file[0]== '\0')
+	{
+		ft_putstr_fd(" No such file or directory\n", 2);
+		g_exit_status = 1;
+		exit(EXIT_FAILURE);
+	}
+	if (amb == 1)
 	{
 		ft_putstr_fd("ambiguous redirect\n", 2);
 		g_exit_status = 1;
 		exit(EXIT_FAILURE);
 	}
-	fd = open(file, O_RDONLY);
+	fd = open(file, O_RDONLY , 0644);
 	if (fd < 0)
 	{
 		perror("open");
@@ -100,13 +102,20 @@ void	hundle_redir_in(char *file)
 	close(fd);
 }
 
-void	hundle_dredir_out(char *file)
+void	hundle_dredir_out(char *file, int amb)
 {
 	int	fd;
 
-	if (file == NULL)
+	if (file == NULL || file[0]== '\0')
 	{
-		ft_putstr_fd("ambiguous redirect\n", 2);
+		ft_putstr_fd(" No such file or directory\n", 2);
+		g_exit_status = 1;
+		exit(EXIT_FAILURE);
+	}
+	
+	if (amb == 1)
+	{
+		ft_putstr_fd(" No such file or directory\n", 2);
 		g_exit_status = 1;
 		exit(EXIT_FAILURE);
 	}

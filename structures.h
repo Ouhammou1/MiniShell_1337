@@ -3,19 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   structures.h                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rel-mora <rel-mora@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 07:58:38 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/09/15 14:05:12 by rel-mora         ###   ########.fr       */
+/*   Updated: 2024/09/24 17:39:20 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef STRUCTURES_H
 # define STRUCTURES_H
-# include <stdbool.h>
 
 int						g_exit_status;
-
 
 typedef struct s_idx
 {
@@ -29,6 +27,13 @@ typedef struct s_idx
 }						t_idx;
 
 
+typedef struct s_expand_her
+{
+	int		i;
+	int		j;
+	int		len;
+	char	*final;
+} t_expand_her;
 typedef enum e_token
 {
 	nothing = 0,
@@ -77,7 +82,7 @@ typedef struct s_envarment
 	char				*var;
 	char				*data;
 	struct s_envarment	*next;
-}						t_envarment;
+}						t_environment;
 
 typedef struct s_here_doc
 {
@@ -95,7 +100,6 @@ typedef struct s_command
 	char				**arg;
 	t_redirect			*doc;
 	t_here_doc			*her;
-	char				**store_her;
 	char				**ar_env;
 	int					is_amb;
 	int					is_exp;
@@ -104,7 +108,14 @@ typedef struct s_command
 	struct s_command	*next;
 }						t_command;
 
-
+typedef struct s_array_env
+{
+	char				**env_v;
+	int					len;
+	char				*var_1;
+	char				*var_2;
+	char				*res;
+}						t_envar;
 
 typedef struct s_pre
 {
@@ -112,18 +123,28 @@ typedef struct s_pre
 	int					i;
 	int					j;
 	int					is_expand;
-		t_command	*tmp_cmd;
-	t_splitor	*tmp_x;
+	int					is_amb;
+	t_command			*tmp_cmd;
+	t_splitor			*tmp_x;
 }						t_pre;
 
-typedef struct pipe
+typedef struct s_pipe
 {
-	int			num_cmd;
-	int			**pipefd;
-	t_command	*tmp_cmd;
-	int		*pids;
-	int			heredoc_fd;
-	int			i;
-	char		*ptr;
-}		t_pipe;
+	int					num_cmd;
+	int					**pipefd;
+	t_command			*tmp_cmd;
+	int					*pids;
+	int					heredoc_fd;
+	int					i;
+	char				*ptr;
+}						t_pipe;
+
+typedef struct s_ps
+{
+	int					len_of_arg;
+	int					len_of_join;
+	char				**new_arg;
+	int					idx;
+	int					j;
+}						t_ps;
 #endif

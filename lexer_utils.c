@@ -6,35 +6,11 @@
 /*   By: rel-mora <rel-mora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/25 13:23:44 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/09/15 18:12:40 by rel-mora         ###   ########.fr       */
+/*   Updated: 2024/09/24 13:50:09 by rel-mora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-void	print_t_command(t_splitor *cmd)
-{
-	(void)cmd;
-/* 	if (cmd == NULL)
-	{
-		printf("Command is NULL\n");
-		return ;
-	}
-	while (cmd != NULL)
-	{
-		printf("str_input: %s | ", cmd->in);
-		printf("len: %d			| ", cmd->len);
-		printf("token: %d		| ", cmd->type);
-		if (cmd->state == 2)
-			printf("state: GENERAL 		|\n");
-		if (cmd->state == 1)
-			printf("state: IN_SINGLE	|\n");
-		if (cmd->state == 0)
-			printf("state: IN_DOUBLE	|\n");
-		cmd = cmd->next;
-		printf("--------------------\n");
-	} */
-}
 
 int	ft_search(char *s, char *d)
 {
@@ -63,7 +39,7 @@ int	ft_isspace(char c)
 
 t_token	ft_get_token(char str_input)
 {
-	if (str_input == ' ')
+	if (str_input == ' ' || str_input == '\t' || str_input == '\n')
 		return (WHITE_SPACE);
 	else if (str_input == '\n')
 		return (NEW_LINE);
