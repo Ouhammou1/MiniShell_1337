@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 12:21:29 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/09/24 21:10:58 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/27 11:18:06 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,84 +23,84 @@ int	is_directory(char *path)
 	return (0);
 }
 
-void	ft_access_2(char *ptr, char **str)
+void	printf_error_exit(char *ptr, char **str, char *s, int ext)
 {
-	if (access(ptr, F_OK) == -1 || access(ptr, X_OK) == -1 || ptr[0] == '\0')
-	{
-		ft_putstr_fd(ptr, 2);
-		ft_putstr_fd(": command not found\n", 2);
-		if (ptr != str[0])
-			free(ptr);
-		g_exit_status = 127;
-		exit(127);
-	}
-	else if (is_directory(ptr))
-	{
-		ft_putstr_fd(ptr, 2);
-		ft_putstr_fd(": command not found\n", 2);
-		if (ptr != str[0])
-			free(ptr);
-		g_exit_status = 127;
-		exit(127);
-	}
-}
-
-void	printf_error_exit(char *ptr, char **str, char *s, int exit)
-{
+	(void)str;
 	ft_putstr_fd(ptr, 2);
 	ft_putchar_fd(':', 2);
 	ft_putstr_fd(s, 2);
-	if (ptr != str[0])
-		free(ptr);
-	g_exit_status = exit;
+	g_exit_status = ext;
+	exit(ext);
 }
 
-void	ft_access_1(char *ptr, char **str)
+void	ft_access_2(char *ptr, char **str, char **env_v)
 {
-	
+	if (access(ptr, F_OK) == -1)
+	{
+		if (ft_getenv("PATH", env_v) == NULL)
+		{
+			printf_error_exit("minishell ", str,
+				": No such file or directory\n", 127);
+		}
+		if (access(ptr, X_OK) == -1)
+		{
+			printf_error_exit("minishell ", str, ": command not found\n", 127);
+		}
+	}
+	else if (is_directory(ptr))
+	{
+		ft_putstr_fd("minishell:", 2);
+		ft_putstr_fd(": command not found\n", 2);
+		if (ptr != str[0])
+			free(ptr);
+		g_exit_status = 127;
+		exit(127);
+	}
+}
+
+void	ft_access_1(char *ptr, char **str, char **env_v)
+{
 	if (ptr[ft_strlen(ptr) - 1] == '/')
 	{
 		if (is_directory(ptr))
 		{
-			printf_error_exit(ptr, str, ": is a directory\n", 126);
+			printf_error_exit("minishell:", str, ": is a directory\n", 126);
 			exit(126);
 		}
 		else
 		{
-			printf_error_exit(ptr, str, ": Not a directory\n", 126);
+			printf_error_exit("minishell:", str, ": Not a directory\n", 126);
 			exit(126);
 		}
 	}
 	else
 	{
-		ft_access_2(ptr, str);
+		ft_access_2(ptr, str, env_v);
 	}
 }
 
-void	ft_access(char *ptr, char **str)
+void	ft_access(char *ptr, char **str, char **env_v)
 {
-	if(ptr == NULL || ptr[0] == '\0')
-		printf_error_exit(ptr,str, " command not found\n", 127 );
-		
-	if (ptr == NULL || str == NULL || *str == NULL )
+	if (ptr == NULL || str == NULL || *str == NULL)
 		return ;
 	if (ft_strncmp(ptr, "./", 2) == 0 || ptr[0] == '/')
 	{
 		if (access(ptr, F_OK) == -1)
 		{
-			printf_error_exit(ptr, str, " No such file or directory\n", 127);
+			printf_error_exit("minishell:", str, " No such file or directory\n",
+				127);
 			exit(127);
 		}
 		if (access(ptr, X_OK) == -1)
 		{
-			printf_error_exit(ptr, str, ": Permission denied\n", 126);
+			printf_error_exit("minishell:", str, ": Permission denied\n", 126);
 			exit(126);
 		}
 		if (is_directory(ptr))
 		{
-			printf_error_exit(ptr, str, ": is a directory\n", 126);
+			printf_error_exit("minishell:", str, ": is a directory\n", 126);
 			exit(126);
 		}
 	}
-	ft_access_1(ptr, str);
+	ft_access_1(ptr, str, env_v);
 }

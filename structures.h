@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/07 07:58:38 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/09/24 17:39:20 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/27 19:38:01 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,14 +26,30 @@ typedef struct s_idx
 	int					in_d;
 }						t_idx;
 
-
+typedef struct ft_cd
+{
+	char	*path;
+	char	*ptr;
+	char **env;
+} 				t_cd;
 typedef struct s_expand_her
 {
-	int		i;
-	int		j;
-	int		len;
-	char	*final;
-} t_expand_her;
+	int					i;
+	int					j;
+	int					len;
+	char				*final;
+	char				*s;
+}						t_expand_her;
+
+typedef struct path_cmd
+{
+	char	*path;
+	char	**list;
+	char	*tmp;
+}						t_path_cmd;
+
+
+
 typedef enum e_token
 {
 	nothing = 0,
@@ -147,4 +163,23 @@ typedef struct s_ps
 	int					idx;
 	int					j;
 }						t_ps;
+
+typedef struct  delet_file
+{
+	t_command	*tmp;
+	t_here_doc	*her;
+	char		*ptr;
+	char		*file;
+	char		*itoa;
+}						t_delet;
+
+typedef struct check_var
+{
+	char			*ptr_1;
+	char			*ptr_2;
+	t_environment	*elem;
+	char			**list;
+}	t_check_var;
+
+
 #endif

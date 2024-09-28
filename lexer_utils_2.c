@@ -6,7 +6,7 @@
 /*   By: rel-mora <rel-mora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 16:43:45 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/09/24 13:51:04 by rel-mora         ###   ########.fr       */
+/*   Updated: 2024/09/26 14:12:51 by rel-mora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,24 +31,38 @@ void	ft_else(char *s, t_idx *var)
 	var->len++;
 }
 
-void	ft_check_env(char *s, t_idx *var)
+void	ft_num_env(char *s, t_idx *var)
 {
-	if (s[var->i] && s[var->i] == '$' && ft_isalpha(s[var->i + 1])
-		&& !ft_check_input(s[var->i + 1]))
+	if (s[var->i] && ft_isdigit(s[var->i + 1]))
 	{
-		while (s[var->i] && !ft_check_input(s[var->i + 1])
-			&& ft_isalpha(s[var->i + 1]))
+		if (s[var->i] && ft_isdigit(s[var->i + 1]))
 		{
 			var->state = ft_get_state(var, s[var->i++]);
 			var->len++;
 		}
 	}
+	else
+	{
+		while (s[var->i] && !ft_check_input(s[var->i + 1])
+			&& ft_isalnum(s[var->i + 1]))
+		{
+			var->state = ft_get_state(var, s[var->i++]);
+			var->len++;
+		}
+	}
+}
+
+void	ft_check_env(char *s, t_idx *var)
+{
+	if (s[var->i] && s[var->i] == '$' && ft_isalnum(s[var->i + 1])
+		&& !ft_check_input(s[var->i + 1]))
+		ft_num_env(s, var);
 	else if (s[var->i] && s[var->i] == '$' && s[var->i + 1] == '?')
 		ft_else(s, var);
-	else if (s[var->i] && s[var->i] == '$' && !ft_isalpha(s[var->i + 1])
+	else if (s[var->i] && s[var->i] == '$' && !ft_isalnum(s[var->i + 1])
 		&& !ft_check_input(s[var->i + 1]))
 	{
-		while (s[var->i] && s[var->i] == '$' && !ft_isalpha(s[var->i + 1])
+		while (s[var->i] && s[var->i] == '$' && !ft_isalnum(s[var->i + 1])
 			&& !ft_check_input(s[var->i + 1]))
 		{
 			var->state = ft_get_state(var, s[var->i++]);
@@ -56,7 +70,9 @@ void	ft_check_env(char *s, t_idx *var)
 		}
 	}
 	else
+	{
 		var->state = ft_get_state(var, s[var->i]);
+	}
 }
 
 void	ft_get_env(char *s, t_idx *var, t_splitor **x)
@@ -85,21 +101,4 @@ void	ft_get_env(char *s, t_idx *var, t_splitor **x)
 		ft_check_env(s, var);
 	ft_add(x, ft_lstnew(ft_substr(s, var->start, var->len), var->len, ENV,
 			var->state));
-}
-
-void	ft_get_char(char *s, t_idx *var, t_splitor **x)
-{
-	var->len++;
-	if (s[var->i] && s[var->i] == '$')
-		ft_get_env(s, var, x);
-	else
-	{
-		if (s[var->i] && ((s[var->i] == '>' && s[var->i + 1] == '>')
-				|| (s[var->i] == '<' && s[var->i + 1] == '<')))
-			ft_her_dir(x, var, s);
-		else
-			ft_add(x, ft_lstnew(ft_substr(s, var->start, var->len), var->len,
-					ft_get_token(s[var->i]), ft_get_state(var, s[var->i])));
-	}
-	var->i++;
 }

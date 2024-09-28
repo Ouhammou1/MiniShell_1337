@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 14:02:41 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/09/24 15:17:44 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/28 11:03:59 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,14 +60,15 @@ int	test_exist(t_environment **var, char **list)
 	ptr = *var;
 	while (ptr)
 	{
-		if (ft_strcmp(ptr->var, list[0]) == 0)
+		if (list[0] != NULL && ft_strcmp(ptr->var, list[0]) == 0)
 		{
-			if (ft_strcmp(ptr->data, list[1]) == 0)
+			if (list[1] != NULL && ft_strcmp(ptr->data, list[1]) == 0)
 				return (0);
 			else
 			{
-				if (list[1][0] == '\0')
+				if (list[1] == NULL)
 					return (0);
+				printf("1111111111111                \n");
 				free(ptr->data);
 				ptr->data = ft_strdup(list[1]);
 				return (0);
@@ -76,6 +77,22 @@ int	test_exist(t_environment **var, char **list)
 		ptr = ptr->next;
 	}
 	return (1);
+}
+
+void	free_args_1(char **args)
+{
+	int	i;
+
+	if (args == NULL)
+		return ;
+	i = 0;
+	while (args[i] != NULL)
+	{
+		free(args[i]);
+		i++;
+	}
+	free(args);
+	args = NULL;
 }
 
 void	free_args(char **args)
@@ -96,25 +113,4 @@ void	free_args(char **args)
 	}
 	free(args);
 	args = NULL;
-}
-
-char	*first_word(char *ptr)
-{
-	int		i;
-	char	*str;
-
-	i = 0;
-	while (ptr[i] && ptr[i] != '=')
-		i++;
-	str = (char *)malloc(sizeof(char) * (i + 1));
-	if (str == NULL)
-		return (NULL);
-	i = 0;
-	while (ptr[i] && ptr[i] != '=')
-	{
-		str[i] = ptr[i];
-		i++;
-	}
-	str[i] = '\0';
-	return (str);
 }

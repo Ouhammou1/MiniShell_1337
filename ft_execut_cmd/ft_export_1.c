@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 13:49:01 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/09/24 15:48:06 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/27 19:42:16 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,44 +27,18 @@ void	print_export(t_environment **var)
 	ptr = *var;
 	while (ptr != NULL)
 	{
-		if (ptr->data != NULL && ptr->data[0] == '\0')
-			printf("Declare -x %s\n", (char *)ptr->var);
+		if (ptr->data == NULL)
+			printf("declare -x %s\n", (char *)ptr->var);
 		else if (ptr->data != NULL && ptr->data[0] == '='
 			&& ptr->data[1] == '\0')
-			printf("Declare -x %s=\"\"\n", (char *)ptr->var);
+			printf("declare -x %s=\"\"\n", (char *)ptr->var);
 		else
-			printf("Declare -x %s=\"%s\"\n", (char *)ptr->var,
+			printf("declare -x %s=\"%s\"\n", (char *)ptr->var,
 				(char *)ptr->data);
 		ptr = ptr->next;
 	}
 	return ;
 }
-
-// void	check_dolar_is(char *str, t_environment *var, t_command *s)
-// {
-// 	char	*ptr;
-// 	int		i;
-
-// 	i = 1;
-// 	ptr = (char *)malloc(sizeof(char) * (ft_strlen(str) + 1));
-// 	if (ptr == NULL)
-// 		return ;
-// 	if (str[0] == '$')
-// 	{
-// 		while (str[i])
-// 		{
-// 			if (!ft_isalnum_exp(str[i]))
-// 			{
-// 				ft_putstr_fd("not a valid identifier\n", 2);
-// 				return ;
-// 			}
-// 			i++;
-// 		}
-// 	}
-// 	if (s->arg[2] == NULL || s->arg[2][0] == '\0')
-// 		print_export(&var);
-// 	free(ptr);
-// }
 
 int	exist_redir(char *ptr)
 {
@@ -77,4 +51,25 @@ int	exist_redir(char *ptr)
 	if (ft_strcmp(ptr, "<") == 0)
 		return (1);
 	return (0);
+}
+
+char	*first_word(char *ptr)
+{
+	int		i;
+	char	*str;
+
+	i = 0;
+	while (ptr[i] && ptr[i] != '=')
+		i++;
+	str = (char *)malloc(sizeof(char) * (i + 1));
+	if (str == NULL)
+		return (NULL);
+	i = 0;
+	while (ptr[i] && ptr[i] != '=')
+	{
+		str[i] = ptr[i];
+		i++;
+	}
+	str[i] = '\0';
+	return (str);
 }

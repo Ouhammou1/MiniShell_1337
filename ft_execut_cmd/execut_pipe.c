@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/16 12:39:52 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/09/24 21:33:09 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/27 21:49:57 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,11 +59,10 @@ void	ft_write_in_pipe(t_pipe *hd_p, int i)
 
 void	ft_func_2(t_pipe *hd_p, int i, t_environment **var)
 {
-
 	if (hd_p->pids[i] == 0)
 	{
 		ft_write_in_pipe(hd_p, i);
-		if (test_redir_here_doc(hd_p->tmp_cmd))
+		if (test_redir(hd_p->tmp_cmd))
 			hundle_redirections(hd_p->tmp_cmd);
 		if (built_in_exist(hd_p->tmp_cmd) == 1)
 		{
@@ -77,13 +76,13 @@ void	ft_func_2(t_pipe *hd_p, int i, t_environment **var)
 			close(hd_p->heredoc_fd);
 		}
 		hd_p->ptr = path_command(hd_p->tmp_cmd->content, array_env(var));
-		ft_access(hd_p->ptr, array_env(var));
+		ft_access(hd_p->ptr, array_env(var), array_env(var));
 		if (execve(hd_p->ptr, hd_p->tmp_cmd->arg, array_env(var)) == -1)
 			exit(1);
 	}
 }
 
-void	ft_func(t_pipe *hd_p, int i, t_environment **var)
+void	ft_run_pipes(t_pipe *hd_p, int i, t_environment **var)
 {
 	if (hd_p->tmp_cmd->is_pipe == 1)
 		hd_p->tmp_cmd = hd_p->tmp_cmd->next;
@@ -129,7 +128,7 @@ void	handle_pipe(t_command *list, t_environment **var)
 	while (i < hd_p.num_cmd)
 	{
 		signal(SIGINT, sig_herdoc);
-		ft_func(&hd_p, i, var);
+		ft_run_pipes(&hd_p, i, var);
 		i++;
 	}
 	close_free_wait(hd_p.pids, hd_p.pipefd, hd_p.num_cmd);

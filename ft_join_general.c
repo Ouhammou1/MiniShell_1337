@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_join_general.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rel-mora <rel-mora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/21 17:16:53 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/09/24 16:59:32 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/26 17:32:44 by rel-mora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,8 @@ void	ft_join_word_2(char ***arr_join, t_splitor **tmp_x,
 		ft_join_arr(arr_join, (*tmp_x)->in);
 	else if ((*tmp_x) != NULL && ((*tmp_x)->state == D || (*tmp_x)->state == S))
 		ft_join_arr(arr_join, (*tmp_x)->in);
-	if ((*tmp_x) != NULL && (*tmp_x)->type != ' '&&  !(redirection(*tmp_x) && (*tmp_x)->state == G))
+	if ((*tmp_x) != NULL && (*tmp_x)->type != ' ' && !(redirection(*tmp_x)
+			&& (*tmp_x)->state == G))
 		(*tmp_x) = (*tmp_x)->next;
 }
 
@@ -91,8 +92,8 @@ char	**ft_word(t_splitor **tmp_x, t_environment *my_env, int j,
 
 	s = NULL;
 	while ((*tmp_x) != NULL && ((*tmp_x)->state == G && (*tmp_x)->type != ' '
-			&& (*tmp_x)->type != '|' && (!redirection(*tmp_x)
-				&& (*tmp_x)->state == G) && !quotes(*tmp_x)))
+			&& (*tmp_x)->type != '|' && (!redirection(*tmp_x) && !quotes(*tmp_x)
+				&& (*tmp_x)->state == G)))
 	{
 		if ((*tmp_x)->type == '$' && (*tmp_x)->state == G && j == 1)
 		{

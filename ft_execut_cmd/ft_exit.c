@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/18 23:39:14 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/09/24 16:17:04 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/27 19:41:23 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,35 +39,41 @@ int	is_number(char *arg)
 	return (1);
 }
 
-void	ft_free_when_exit(t_environment **var, char *str, int fd, t_command *cmd)
+void	ft_free_when_exit(t_environment **var, char *str, int fd,
+		t_command *cmd)
 {
-	(void) cmd;
+	(void)cmd;
 	ft_putstr_fd(str, fd);
-	// ft_free_command(&cmd);
+	ft_free_command(&cmd);
 	ft_free_env(var);
 }
 
-void	ft_exit_comp(int len, char *ptr)
+void	ft_exit_comp(int len, char **ptr)
 {
-	if (len == 2 && is_number(ptr) && ptr[0] == '-')
+	if (len == 2 && is_number(ptr[1]) && ptr[0][0] == '-')
 	{
 		g_exit_status = 255;
-		ft_putstr_fd("exit\n", 1);
 		exit(255);
 	}
-	else if (len == 2 && !is_number(ptr))
+	else if (ptr[1] && !is_number(ptr[1]))
 	{
 		g_exit_status = 255;
-		ft_putstr_fd("exit\n", 1);
-		ft_putstr_fd(" numeric argument required\n", 2);
+		ft_putstr_fd("minishell: exit: ", 2);
+		ft_putstr_fd(ptr[1], 2);
+		ft_putstr_fd(": numeric argument required\n", 2);
+		exit(255);
+	}
+	else if (len > 2 && ptr[1] && ptr[2] && !is_number(ptr[1])
+		&& !is_number(ptr[2]))
+	{
+		g_exit_status = 255;
+		ft_putstr_fd("minishell: exit: numeric argument required\n", 2);
 		exit(255);
 	}
 	else if (len > 2)
 	{
-		ft_putstr_fd("exit\n", 1);
-		g_exit_status = 255;
-		ft_putstr_fd(" too many arguments\n", 2);
-		exit(255);
+		g_exit_status = 1;
+		ft_putstr_fd("minishell: exit: too many arguments\n", 2);
 	}
 }
 
@@ -75,15 +81,12 @@ void	ft_exit(t_environment **var, t_command *cmd)
 {
 	int	len;
 
+	(void)var;
 	len = ft_len_arg(cmd->arg);
 	if (len == 1)
-	{
-		g_exit_status = 0;
-		ft_free_when_exit(var, "exit\n", 1, cmd);
-		exit(0);
-	}
+		exit(g_exit_status);
 	else if (len == 2 && is_number(cmd->arg[1]) && (cmd->arg[1][0] != '+'
-		|| cmd->arg[1][0] != '+'))
+			|| cmd->arg[1][0] != '+'))
 	{
 		g_exit_status = ft_atoi(cmd->arg[1]);
 		exit(ft_atoi(cmd->arg[1]));
@@ -91,11 +94,8 @@ void	ft_exit(t_environment **var, t_command *cmd)
 	else if (len == 2 && is_number(cmd->arg[1]) && cmd->arg[1][0] == '+')
 	{
 		g_exit_status = ft_atoi(cmd->arg[1]);
-		ft_putstr_fd("exit\n", 1);
 		exit(ft_atoi(cmd->arg[1]));
 	}
 	else
-		ft_exit_comp(len, cmd->arg[1]);
+		ft_exit_comp(len, cmd->arg);
 }
-
-
