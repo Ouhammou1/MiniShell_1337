@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/18 14:02:41 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/09/28 11:03:59 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/28 12:07:34 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,6 @@ int	test_exist(t_environment **var, char **list)
 			{
 				if (list[1] == NULL)
 					return (0);
-				printf("1111111111111                \n");
 				free(ptr->data);
 				ptr->data = ft_strdup(list[1]);
 				return (0);

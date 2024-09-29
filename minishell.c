@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/17 13:08:06 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/09/28 10:58:21 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/28 19:52:30 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,16 +41,6 @@ void	ft_initialize(t_splitor *x, t_command **cmd, t_environment **my_env)
 	ft_free_lexer(&x);
 }
 
-void	ft_free_when_exit_1(t_splitor *x, t_command **cmd,
-		t_environment **my_env)
-{
-	// printf("exit\n");
-	ft_free_command(cmd);
-	ft_free_lexer(&x);
-	ft_free_env(my_env);
-	exit(g_exit_status);
-}
-
 void	ft_reader(t_splitor *x, t_command *cmd, t_environment **my_env)
 {
 	char	*str_input;
@@ -59,7 +49,10 @@ void	ft_reader(t_splitor *x, t_command *cmd, t_environment **my_env)
 	{
 		str_input = readline("minishell ");
 		if (!str_input)
-			ft_free_when_exit_1(x, &cmd, my_env);
+		{
+			// printf("exit\n");
+			exit(g_exit_status);
+		}
 		if (ft_strlen(str_input) > 0)
 			add_history(str_input);
 		if (ft_lexer(str_input, &x))
@@ -73,7 +66,6 @@ void	ft_reader(t_splitor *x, t_command *cmd, t_environment **my_env)
 		cmd = NULL;
 		x = NULL;
 		free(str_input);
-		// system("leaks minishell");
 	}
 }
 
@@ -83,7 +75,7 @@ int	main(int ac, char **av, char **env)
 	t_environment	*my_env;
 	t_command		*cmd;
 
-	atexit(ok);
+	// atexit(ok);
 	signal(SIGINT, handle_sig);
 	signal(SIGQUIT, SIG_IGN);
 	(void)ac;

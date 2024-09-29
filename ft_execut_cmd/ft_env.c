@@ -21,16 +21,14 @@ void	ft_env(t_environment **var)
 	ptr = *var;
 	while (ptr != NULL)
 	{
-	
-		if (ptr->data != NULL  && ptr->data[0] == '\0')
+		if (ptr->data != NULL && ptr->data[0] == '\0')
 		{
 			printf("%s=\n", ptr->var);
 		}
-		else if( ptr->data != NULL)
+		else if (ptr->data != NULL)
 		{
 			printf("%s=%s\n", ptr->var, ptr->data);
 		}
-		
 		ptr = ptr->next;
 	}
 	return ;

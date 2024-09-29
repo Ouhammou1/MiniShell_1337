@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/18 23:39:14 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/09/27 19:41:23 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/28 20:06:27 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ void	ft_exit(t_environment **var, t_command *cmd)
 	if (len == 1)
 		exit(g_exit_status);
 	else if (len == 2 && is_number(cmd->arg[1]) && (cmd->arg[1][0] != '+'
-			|| cmd->arg[1][0] != '+'))
+		|| cmd->arg[1][0] != '+'))
 	{
 		g_exit_status = ft_atoi(cmd->arg[1]);
 		exit(ft_atoi(cmd->arg[1]));
