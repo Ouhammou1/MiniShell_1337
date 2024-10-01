@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/21 17:16:53 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/09/28 14:04:37 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/09/30 18:34:52 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ char	**ft_word(t_splitor **tmp_x, t_environment *my_env, int j,
 
 	s = NULL;
 	while ((*tmp_x) != NULL && ((*tmp_x)->state == G && (*tmp_x)->type != ' '
-			&& (*tmp_x)->type != '|' && (!redirection(*tmp_x) && !quotes(*tmp_x)
+			&& (*tmp_x)->type != '|' && (!redirection(*tmp_x) && !quotes(*tmp_x) &&   (*tmp_x)->type != '|'
 				&& (*tmp_x)->state == G)))
 	{
 		if ((*tmp_x)->type == '$' && (*tmp_x)->state == G && j == 1)
