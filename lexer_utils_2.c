@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_utils_2.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rel-mora <rel-mora@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 16:43:45 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/09/26 14:12:51 by rel-mora         ###   ########.fr       */
+/*   Updated: 2024/10/02 14:45:43 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ void	ft_get_env(char *s, t_idx *var, t_splitor **x)
 {
 	if ((s[var->i] && s[var->i + 1] && s[var->i + 2] && s[var->i] == '$')
 		&& ((s[var->i + 1] == '\"' && s[var->i + 2] == '\"') || (s[var->i
-					+ 1] == '\'' && s[var->i + 2] == '\'')))
+				+ 1] == '\'' && s[var->i + 2] == '\'')))
 	{
 		var->state = G;
 		var->i++;
@@ -91,7 +91,7 @@ void	ft_get_env(char *s, t_idx *var, t_splitor **x)
 	}
 	else if ((s[var->i] && s[var->i + 1] && s[var->i + 2] && s[var->i] == '$')
 		&& ((s[var->i + 1] == '\"') || (s[var->i + 1] == '\'')) && (s[var->i
-				+ 2] == ' ' || s[var->i + 2] == '\0'))
+				+ 2] != '\'' || s[var->i + 2] != '\"'))
 	{
 		var->i++;
 		var->state = ft_get_state(var, s[var->i]);

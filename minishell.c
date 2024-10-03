@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/17 13:08:06 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/09/29 12:14:26 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/10/03 20:53:37 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	handle_sig(int sig)
 	if (sig == SIGINT)
 	{
 		printf("\n");
-		rl_replace_line("", 0);
+		// rl_replace_line("", 0);
 		rl_on_new_line();
 		rl_redisplay();
 	}
@@ -42,7 +42,7 @@ void	ft_reader(t_splitor *x, t_command *cmd, t_environment **my_env)
 
 	while (1)
 	{
-		str_input = readline("minishell ");
+		str_input = readline("minishell$ ");
 		if (!str_input)
 		{
 			printf("exit\n");

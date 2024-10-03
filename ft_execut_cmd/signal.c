@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/22 16:17:50 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/09/29 12:13:47 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/10/03 20:52:58 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	hhandle_sig(int sig)
 	if (sig == SIGINT)
 	{
 		write(1, "\n", 1);
-		rl_replace_line("", 0);
+		// rl_replace_line("", 0);
 		rl_on_new_line();
 		rl_redisplay();
 		g_exit_status = 1;
