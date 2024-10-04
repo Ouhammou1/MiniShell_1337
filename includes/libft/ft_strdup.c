@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/13 01:51:05 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/09/24 20:27:36 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/10/04 20:50:03 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,11 @@ char	*ft_strdup(const char *s1)
 	size_t	i;
 	char	*s2;
 
+	if(s1 == NULL)
+		return NULL;
 	len = ft_strlen(s1);
 	s2 = (char *) malloc((len + 1) * sizeof(char));
-	if (!s2 || !s1)
+	if (!s2 )
 		return (NULL);
 	i = 0;
 	while (s1[i])
