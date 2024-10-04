@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 19:19:52 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/09/27 19:38:29 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/10/04 00:38:48 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,6 @@ void	export_1(t_environment **var, t_command *str, int *i)
 	free_args(list);
 	return ;
 }
-
 int	ft_check_var(t_environment **var, t_command *str)
 {
 	t_check_var	check;
@@ -122,7 +121,8 @@ void	ft_export(t_environment **var, t_command *str)
 
 	i = 1;
 	if (ft_check_var(var, str))
-		return ;
+		if (str->arg[2] == NULL)
+			return;
 	while (str->arg[i] != NULL)
 	{
 		if (str->arg[i][0] == '\0')
