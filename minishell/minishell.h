@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rel-mora <rel-mora@student.42.fr>          +#+  +:+       +#+        */
+/*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/25 14:49:25 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/09/29 10:47:53 by rel-mora         ###   ########.fr       */
+/*   Updated: 2024/10/07 13:06:08 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@
 # include <stdbool.h>
 # include <stdio.h>
 # include <stdlib.h>
-# include <string.h>
 # include <sys/ioctl.h>
 # include <sys/stat.h>
 # include <sys/types.h>
@@ -245,4 +244,5 @@ void			free_pid_pipe(int *pids, int **pipefd, int num_cmd);
 char			*ft_join(char *s1, char *s2);
 int				ft_check_built(t_command *list);
 void			print_error_amb(int ext);
+void			print_error_exit(char *ptr, int ext);
 #endif

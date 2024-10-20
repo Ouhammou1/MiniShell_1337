@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/09 19:19:45 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/10/04 00:51:20 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/10/05 11:19:20 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,14 +96,7 @@ void	ft_cd(t_environment **var, t_command *list)
 	{
 		t.path = ft_getenv("HOME", t.env);
 		if (t.path == NULL)
-		{
-			printf_error_cd("cd: HOME not set OK", 1);
-			free_args(t.env);
-			return ;
-
-			// ft_free_argment(t.env);
-			// return;
-		}
+			printf_error_cd("minishell: cd: HOME not set", 1);
 		else if (chdir(t.path) == -1)
 		{
 			g_exit_status = 1;

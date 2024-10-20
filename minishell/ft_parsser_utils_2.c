@@ -6,7 +6,7 @@
 /*   By: rel-mora <rel-mora@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/06 18:00:12 by rel-mora          #+#    #+#             */
-/*   Updated: 2024/09/26 14:07:20 by rel-mora         ###   ########.fr       */
+/*   Updated: 2024/10/07 11:39:14 by rel-mora         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,8 +41,9 @@ int	ft_ckeck_repeate_quote(char ***arr_join, t_command **new_node,
 				&& (*tmp_x)->next->state == G)) && (((*tmp_x)->type == '\"'
 				&& (*tmp_x)->next->type == '\"') || ((*tmp_x)->type == '\''
 				&& (*tmp_x)->next->type == '\''))
-		&& ((*tmp_x)->next->next != NULL && ((*tmp_x)->next->next->type != 32
-				|| (*tmp_x)->next->next->type == '$')))
+		&& ((*tmp_x)->next->next != NULL
+			&& (redirection((*tmp_x)->next->next) != 1
+				&& (*tmp_x)->next->next->type != 32)))
 	{
 		(*tmp_x) = (*tmp_x)->next;
 		(*tmp_x) = (*tmp_x)->next;
@@ -70,7 +71,7 @@ int	ft_check_gene_quote(t_command **new_node, t_splitor **tmp_x,
 	else if ((*tmp_x) != NULL && ((*tmp_x)->state == D || (*tmp_x)->state == S))
 	{
 		ft_double_and_sigle(tmp_x, my_env, 1, arr_join);
-		if ((*arr_join)[0] != NULL)
+		if ((*arr_join) != NULL && (*arr_join)[0] != NULL)
 		{
 			(*new_node)->arg = ft_join_arg((*new_node)->arg, (*arr_join));
 			ft_free_argment(*arr_join);

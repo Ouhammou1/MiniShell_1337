@@ -6,7 +6,7 @@
 /*   By: bouhammo <bouhammo@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/28 20:46:31 by bouhammo          #+#    #+#             */
-/*   Updated: 2024/09/28 11:34:29 by bouhammo         ###   ########.fr       */
+/*   Updated: 2024/10/20 22:29:39 by bouhammo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void	run_command(t_command *list, t_environment **var)
 	int	heredoc_fd;
 
 	heredoc_fd = -1;
-	if (herdoc_exist(list) == 1 && !pipe_exist(list) && !test_redir(list))
+	if (herdoc_exist(list) == 1 && !pipe_exist(list) && test_redir(list))
 	{
 		heredoc_fd = hundle_file_herdoc(list);
 		if (heredoc_fd != -1)
